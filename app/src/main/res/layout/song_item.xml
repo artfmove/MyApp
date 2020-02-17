@@ -38,6 +38,18 @@
                 android:text="Name of Group"
                 android:textSize="20sp" />
         </LinearLayout>
+        <LinearLayout
+            android:gravity="end"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageButton
+                android:background="@drawable/ic_add_black_24dp"
+                android:id="@+id/addSongImageButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:clickable="true"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

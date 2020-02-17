@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.android.artem.myapp">
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -10,10 +11,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SongActivity"></activity>
+        <activity android:name=".FavouriteListActivity"
+            android:label="Your Song List"></activity>
+        <activity android:name=".SongActivity" />
         <activity
-            android:name=".FavouriteActivity"
-            android:label="List of Your Songs" />
+            android:name=".SearchListActivity"
+            android:label="Choose Song" />
         <activity android:name=".SignInActivity" />
         <activity android:name=".SplashScreenActivity">
             <intent-filter>

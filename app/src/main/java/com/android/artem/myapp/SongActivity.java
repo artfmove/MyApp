@@ -39,13 +39,37 @@ public class SongActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         urlSong = intent.getStringExtra("Id");
+        Thread thread = new Thread(){
+            @Override
+            public void run(){
+                try {
+                    sleep(0,1);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }finally {
+                    createMediaPlayer();
+                }
+            }
+        };
+        thread.start();
 
 
-        mediaPlayer = MediaPlayer.create(this, Uri.parse(urlSong));
-        mediaPlayer.start();
+
 
 
     }
 
 
+
+    private void createMediaPlayer() {
+        mediaPlayer = MediaPlayer.create(this, Uri.parse(urlSong));
+        mediaPlayer.start();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mediaPlayer.stop();
+        finish();
+    }
 }

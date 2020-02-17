@@ -48,11 +48,11 @@ public class SignInActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         if(auth.getCurrentUser() !=null){
-            startActivity(new Intent(SignInActivity.this,FavouriteActivity.class));
+            startActivity(new Intent(SignInActivity.this, SearchListActivity.class));
         }
 
         database = FirebaseDatabase.getInstance();
-        usersDatabaseReference = database.getReference().child("users");
+        usersDatabaseReference = FirebaseDatabase.getInstance().getReference().child("users");
 
         textInputEmail = findViewById(R.id.textInputEmail);
         textInputName = findViewById(R.id.textInputName);
@@ -130,7 +130,7 @@ public class SignInActivity extends AppCompatActivity {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "signInWithEmail:success");
                                 FirebaseUser user = auth.getCurrentUser();
-                                startActivity(new Intent(SignInActivity.this, FavouriteActivity.class));
+                                startActivity(new Intent(SignInActivity.this, SearchListActivity.class));
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -156,7 +156,7 @@ public class SignInActivity extends AppCompatActivity {
                                 Log.d(TAG, "createUserWithEmail:success");
                                 FirebaseUser user = auth.getCurrentUser();
                                 createUser(user);
-                                startActivity(new Intent(SignInActivity.this, FavouriteActivity.class));
+                                startActivity(new Intent(SignInActivity.this, SearchListActivity.class));
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "createUserWithEmail:failure", task.getException());

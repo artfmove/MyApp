@@ -19,19 +19,15 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        getSupportActionBar().hide();//
+        getSupportActionBar().hide();
 
         logo1ImageView = findViewById(R.id.logo1);
         logo2ImageView = findViewById(R.id.logo2);
         logo3ImageView = findViewById(R.id.logo3);
         logo4ImageView = findViewById(R.id.logo4);
+        startActivity(new Intent(SplashScreenActivity.this, SignInActivity.class));
 
-        /*downToUpRight = AnimationUtils.loadAnimation(this, R.anim.down_to_up_right);
-        upToDownRight = AnimationUtils.loadAnimation(this, R.anim.up_to_down_right);
-        downToUpLeft = AnimationUtils.loadAnimation(this, R.anim.down_to_up_left);
-        upToDownLeft = AnimationUtils.loadAnimation(this, R.anim.up_to_down_left);*/
-
-        rotate = AnimationUtils.loadAnimation(this, R.anim.rotate);
+       /* rotate = AnimationUtils.loadAnimation(this, R.anim.rotate);
         rotateBack = AnimationUtils.loadAnimation(this, R.anim.rotate_back);
 
         logo1ImageView.setAnimation(rotateBack);
@@ -51,7 +47,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                 }
             }
         };
-        thread.start();
+        thread.start();*/
     }
 
     @Override

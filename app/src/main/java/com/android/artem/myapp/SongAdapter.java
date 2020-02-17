@@ -8,8 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +28,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
     public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> {
 
+        private DatabaseReference songsDatabaseReference;
+        private FirebaseAuth auth;
         private Context mContext;
         private List<Song> mData;
 
@@ -41,12 +49,31 @@ import androidx.recyclerview.widget.RecyclerView;
         }
 
         @Override
-        public void onBindViewHolder(MyViewHolder holder, final int position) {
+        public void onBindViewHolder(final MyViewHolder holder, final int position) {
 
             holder.titleTextView.setText(mData.get(position).getTitle());
             holder.groupTextView.setText(mData.get(position).getGroup());
             //holder.titleTextView.setText(mData.get(position).getTitle());
+            if(mContext instanceof SearchListActivity) {
+                holder.addSongImageButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        auth = FirebaseAuth.getInstance();
+                        FirebaseUser user = auth.getCurrentUser();
+                        songsDatabaseReference = FirebaseDatabase.getInstance().getReference().child("SongsFav").child(user.getUid());
 
+                        Song song = new Song();
+                        song.setTitle(mData.get(position).getTitle());
+                        song.setId(mData.get(position).getId());
+                        song.setGroup(mData.get(position).getGroup());
+                        songsDatabaseReference.push().setValue(song);
+
+
+                    }
+                });
+            }else{
+                holder.addSongImageButton.setVisibility(View.GONE);
+            }
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -73,6 +100,7 @@ import androidx.recyclerview.widget.RecyclerView;
             private TextView titleTextView, groupTextView;
             //private ImageView previewImageView;
             private CardView cardView;
+            private ImageButton addSongImageButton;
 
             public MyViewHolder(View itemView){
                 super(itemView);
@@ -81,6 +109,8 @@ import androidx.recyclerview.widget.RecyclerView;
                 titleTextView = itemView.findViewById(R.id.titleTextView);
                 groupTextView = itemView.findViewById(R.id.groupTextView);
                 cardView = (CardView) itemView.findViewById(R.id.cardView);
+                addSongImageButton = itemView.findViewById(R.id.addSongImageButton);
+
                 //previewImageView = itemView.findViewById(R.id.previewImageView);
 
             }
