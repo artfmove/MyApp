@@ -55,7 +55,7 @@ import androidx.recyclerview.widget.RecyclerView;
             holder.groupTextView.setText(mData.get(position).getGroup());
             //holder.titleTextView.setText(mData.get(position).getTitle());
             if(mContext instanceof SearchListActivity) {
-                holder.addSongImageButton.setOnClickListener(new View.OnClickListener() {
+                holder.addSongImageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         auth = FirebaseAuth.getInstance();
@@ -72,7 +72,7 @@ import androidx.recyclerview.widget.RecyclerView;
                     }
                 });
             }else{
-                holder.addSongImageButton.setVisibility(View.GONE);
+                holder.addSongImageView.setVisibility(View.GONE);
             }
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -100,7 +100,7 @@ import androidx.recyclerview.widget.RecyclerView;
             private TextView titleTextView, groupTextView;
             //private ImageView previewImageView;
             private CardView cardView;
-            private ImageButton addSongImageButton;
+            private ImageView addSongImageView;
 
             public MyViewHolder(View itemView){
                 super(itemView);
@@ -109,7 +109,7 @@ import androidx.recyclerview.widget.RecyclerView;
                 titleTextView = itemView.findViewById(R.id.titleTextView);
                 groupTextView = itemView.findViewById(R.id.groupTextView);
                 cardView = (CardView) itemView.findViewById(R.id.cardView);
-                addSongImageButton = itemView.findViewById(R.id.addSongImageButton);
+                addSongImageView = itemView.findViewById(R.id.addSongImageView);
 
                 //previewImageView = itemView.findViewById(R.id.previewImageView);
 

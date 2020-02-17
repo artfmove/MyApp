@@ -69,7 +69,9 @@ public class SongActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        mediaPlayer.stop();
+        if(mediaPlayer!=null){
+            mediaPlayer.stop();
+        }
         finish();
     }
 }

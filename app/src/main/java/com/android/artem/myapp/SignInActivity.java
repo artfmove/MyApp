@@ -46,10 +46,7 @@ public class SignInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_in);
 
 
-        auth = FirebaseAuth.getInstance();
-        if(auth.getCurrentUser() !=null){
-            startActivity(new Intent(SignInActivity.this, SearchListActivity.class));
-        }
+
 
         database = FirebaseDatabase.getInstance();
         usersDatabaseReference = FirebaseDatabase.getInstance().getReference().child("users");

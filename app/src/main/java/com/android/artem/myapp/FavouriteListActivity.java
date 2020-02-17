@@ -7,6 +7,11 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.TextWatcher;
+import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,6 +35,8 @@ public class FavouriteListActivity extends AppCompatActivity {
     private SongAdapter songAdapter;
     private RecyclerView.LayoutManager songLayoutManager;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +44,8 @@ public class FavouriteListActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
+
+
 
         songsDatabaseReference = FirebaseDatabase.getInstance().getReference().child("SongsFav").child(user.getUid());
 
@@ -47,7 +56,12 @@ public class FavouriteListActivity extends AppCompatActivity {
         songRecyclerView.setAdapter(songAdapter);
         loadSongs();
 
+
+
+
     }
+
+
 
     public void loadSongs(){
         songsChildEventListener = new ChildEventListener() {

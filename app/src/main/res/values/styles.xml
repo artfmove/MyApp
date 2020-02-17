@@ -8,4 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="Asset">
+        <item name="android:tint">@color/colorMain1</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
 </resources>

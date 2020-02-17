@@ -42,12 +42,13 @@
             android:gravity="end"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <ImageButton
-                android:background="@drawable/ic_add_black_24dp"
-                android:id="@+id/addSongImageButton"
+            <ImageView
+                android:src="@drawable/ic_add_black_24dp"
+                android:id="@+id/addSongImageView"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:clickable="true"/>
+                android:clickable="true"
+                style="@style/Asset"/>
 
         </LinearLayout>
 
