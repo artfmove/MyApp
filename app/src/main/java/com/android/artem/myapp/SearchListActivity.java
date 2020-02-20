@@ -96,7 +96,7 @@ public class SearchListActivity extends AppCompatActivity {
             @Override
             public void run(){
                 try {
-                    sleep(5000);
+                    sleep(10000);
                 }catch (Exception e){
                     e.printStackTrace();
                 }finally {

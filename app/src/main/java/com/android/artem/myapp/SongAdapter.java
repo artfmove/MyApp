@@ -53,7 +53,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
             holder.titleTextView.setText(mData.get(position).getTitle());
             holder.groupTextView.setText(mData.get(position).getGroup());
-            //holder.titleTextView.setText(mData.get(position).getTitle());
             if(mContext instanceof SearchListActivity) {
                 holder.addSongImageView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -67,7 +66,7 @@ import androidx.recyclerview.widget.RecyclerView;
                         song.setId(mData.get(position).getId());
                         song.setGroup(mData.get(position).getGroup());
                         songsDatabaseReference.push().setValue(song);
-
+                        holder.addSongImageView.setImageResource(R.drawable.ic_check_black_24dp);
 
                     }
                 });

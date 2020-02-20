@@ -7,35 +7,33 @@
     tools:context=".SongActivity"
     android:orientation="vertical">
 
-
+<LinearLayout
+    android:layout_weight="1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
     <ImageView
+        android:layout_marginTop="30dp"
         android:layout_gravity="center_horizontal"
         android:id="@+id/imageView"
         android:layout_width="200dp"
         android:layout_height="200dp"
         app:srcCompat="@drawable/ic_music_note_black_24dp"
         tools:layout_editor_absoluteX="136dp"/>
-    <LinearLayout
 
-        android:layout_gravity="center_horizontal"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/idTextView"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="20dp"
-        android:text="id"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
     <TextView
         android:id="@+id/titleTextView"
         android:gravity="center_horizontal"
+        android:textSize="40sp"
+        android:textStyle="bold"
         android:text="Title"
         android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
     <TextView
+        android:textStyle="italic"
+        android:textSize="30sp"
         android:id="@+id/groupTextView"
         android:gravity="center_horizontal"
         android:text="Group"
@@ -43,4 +41,59 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 </LinearLayout>
+
+    <LinearLayout
+        android:gravity="bottom"
+        android:layout_weight="1"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <SeekBar
+        android:id="@+id/positionBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginVertical="30dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:width="0dp"
+                android:id="@+id/elapsedTimeLabel"
+                android:layout_height="wrap_content"
+                android:text="0:00"
+                android:layout_marginStart="30dp"/>
+
+            <TextView
+                android:width="0dp"
+                android:layout_width="0dp"
+                android:gravity="end"
+                android:layout_weight="1"
+                android:id="@+id/remainingTimeLabel"
+                android:layout_height="wrap_content"
+                android:text="0:00"
+                android:layout_marginEnd="30dp"/>
+
+        </LinearLayout>
+
+        <Button
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/playButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="40dp"
+            android:background="@drawable/stop"
+            android:onClick="playButton" />
+
+
+</LinearLayout>
+
 </LinearLayout>
