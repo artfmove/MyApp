@@ -85,9 +85,9 @@ public class SearchListActivity extends AppCompatActivity {
 
         Song song = new Song();
         song.setTitle("Let It Be");
-        song.setId("https://firebasestorage.googleapis.com/v0/b/myapp-72b61.appspot.com/o/song%2Fbitlz-let-it-be.mp3?alt=media&token=d7e837d1-836d-4e42-bac1-de305bc01286");
-        song.setGroup("Beatles");
-        song.setImage("https://firebasestorage.googleapis.com/v0/b/myapp-72b61.appspot.com/o/image%2Fbeatles.png?alt=media&token=a2aeb63d-9c0c-4773-aea1-abc309992bcd");
+        song.setId("https://firebasestorage.googleapis.com/v0/b/myapp-72b61.appspot.com/o/song%2Fmaroon_5_-_this_love_pesni_na_den_svjatogo_valentina_(zf.fm).mp3?alt=media&token=3cd53128-0abb-4d13-a259-8e747fb4c3a5");
+        song.setGroup("Maroon 5");
+        song.setImage("https://firebasestorage.googleapis.com/v0/b/myapp-72b61.appspot.com/o/image%2Fmaroon5.jpg?alt=media&token=cb23f06c-371a-43ef-928c-f75fcd581bd0");
         //songsDatabaseReference.push().setValue(song);
 
 

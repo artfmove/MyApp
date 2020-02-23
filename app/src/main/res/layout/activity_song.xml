@@ -12,8 +12,12 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical">
+        <com.google.android.exoplayer2.ui.PlayerView
+            android:id="@+id/video_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
-        <ImageView
+        <!--<ImageView
             android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="200dp"
@@ -124,7 +128,7 @@
                 android:layout_centerVertical="true"
                 />
 
-        </RelativeLayout>
+        </RelativeLayout>-->
 
     </LinearLayout>
 
