@@ -4,96 +4,128 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SongActivity"
-    android:orientation="vertical">
-
-<LinearLayout
-    android:layout_weight="1"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-    <ImageView
-        android:layout_marginTop="30dp"
-        android:layout_gravity="center_horizontal"
-        android:id="@+id/imageView"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        app:srcCompat="@drawable/ic_music_note_black_24dp"
-        tools:layout_editor_absoluteX="136dp"/>
-
-    <TextView
-        android:id="@+id/titleTextView"
-        android:gravity="center_horizontal"
-        android:textSize="40sp"
-        android:textStyle="bold"
-        android:text="Title"
-        android:layout_marginTop="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:textStyle="italic"
-        android:textSize="30sp"
-        android:id="@+id/groupTextView"
-        android:gravity="center_horizontal"
-        android:text="Group"
-        android:layout_marginTop="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-</LinearLayout>
+    android:orientation="vertical"
+    tools:context=".SongActivity">
 
     <LinearLayout
-        android:gravity="bottom"
-        android:layout_weight="1"
-        android:layout_gravity="center_horizontal"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    <SeekBar
-        android:id="@+id/positionBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="30dp"
-        android:layout_marginVertical="30dp"/>
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_gravity="center_horizontal"
+            app:srcCompat="@drawable/ic_music_note_black_24dp"
+            tools:layout_editor_absoluteX="136dp" />
+
+        <TextView
+            android:id="@+id/titleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center_horizontal"
+            android:text="Title"
+            android:textSize="40sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/groupTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center_horizontal"
+            android:text="Group"
+            android:textSize="30sp"
+            android:textStyle="italic" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:gravity="bottom"
+        android:orientation="vertical">
+
+        <SeekBar
+            android:id="@+id/positionBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginVertical="30dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="70dp"
             android:orientation="horizontal">
 
             <TextView
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:width="0dp"
                 android:id="@+id/elapsedTimeLabel"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="0:00"
-                android:layout_marginStart="30dp"/>
+                android:layout_marginStart="30dp"
+                android:layout_weight="1"
+                android:width="0dp"
+                android:text="00:00"
+                android:textSize="25sp" />
 
             <TextView
-                android:width="0dp"
-                android:layout_width="0dp"
-                android:gravity="end"
-                android:layout_weight="1"
                 android:id="@+id/remainingTimeLabel"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="0:00"
-                android:layout_marginEnd="30dp"/>
+                android:layout_marginEnd="30dp"
+                android:layout_weight="1"
+                android:width="0dp"
+                android:gravity="end"
+                android:text="00:00"
+                android:textSize="25sp" />
 
         </LinearLayout>
 
-        <Button
-            android:layout_gravity="center_horizontal"
-            android:id="@+id/playButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginBottom="40dp"
-            android:background="@drawable/stop"
-            android:onClick="playButton" />
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-</LinearLayout>
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.50"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginLeft="30dp"
+                android:layout_centerVertical="true"/>
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.75"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginEnd="15dp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/playButton"/>
+
+            <ImageView
+                android:id="@+id/playButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:onClick="playButton"
+                android:src="@drawable/stop"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                />
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

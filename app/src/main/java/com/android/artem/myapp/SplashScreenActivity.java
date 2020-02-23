@@ -40,7 +40,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         logo3ImageView.setAnimation(rotate);
         logo4ImageView.setAnimation(rotateBack);
 
-        Thread thread = new Thread(){
+        /*Thread thread = new Thread(){
             @Override
             public void run(){
                 try {
@@ -58,7 +58,8 @@ public class SplashScreenActivity extends AppCompatActivity {
                 }
             }
         };
-        thread.start();
+        thread.start();*/
+        startActivity(new Intent(SplashScreenActivity.this, SearchListActivity.class));
     }
 
     @Override
