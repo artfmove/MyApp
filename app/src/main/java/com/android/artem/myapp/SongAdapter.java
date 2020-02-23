@@ -65,6 +65,7 @@ import androidx.recyclerview.widget.RecyclerView;
                         song.setTitle(mData.get(position).getTitle());
                         song.setId(mData.get(position).getId());
                         song.setGroup(mData.get(position).getGroup());
+                        song.setImage(mData.get(position).getImage());
                         songsDatabaseReference.push().setValue(song);
                         holder.addSongImageView.setImageResource(R.drawable.ic_check_black_24dp);
 
@@ -82,6 +83,7 @@ import androidx.recyclerview.widget.RecyclerView;
                     intent.putExtra("Title", mData.get(position).getTitle());
                     intent.putExtra("Group", mData.get(position).getGroup());
                     intent.putExtra("Id", mData.get(position).getId());
+                    intent.putExtra("Image", mData.get(position).getImage());
 
                     //start activity
                     mContext.startActivity(intent);
