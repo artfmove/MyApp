@@ -1,5 +1,6 @@
 package com.android.artem.myapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -11,10 +12,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -25,39 +30,44 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import com.squareup.picasso.Picasso;
-
-import java.io.IOException;
 
 public class SongActivity extends AppCompatActivity {
 
 
-    private TextView titleTextView, groupTextView, elapsedTimeLabel, remainingTimeLabel;
+    private TextView titleTextView, groupTextView;
     private ImageView imageView;
-    private FirebaseStorage firebaseStorage;
-    private StorageReference storageReference;
+
+
+    private DatabaseReference songsDatabaseReference;
+    private FirebaseAuth auth;
+    private FirebaseDatabase database;
+    private ValueEventListener listener;
 
 
     private String urlSong;
-    private MediaPlayer mp;
+    private String title;
+    private String group;
+    private boolean isAdded = true;
 
-    private SeekBar positionBar;
-    private ImageView playButton;
-    private int totalTime;
 
-    private boolean isClosed;
-
-    private CountDownTimer countDownTimer;
-    //private CreateMpAsyncTask createMpAsyncTask;
-
-    private boolean playWhenReady = true;
+    private boolean playWhenReady;
     private int currentWindow = 0;
     private long playbackPosition = 0;
     private PlayerView playerView;
     private SimpleExoPlayer player;
+
+    private Intent intent;
+    private String activity;
 
 
     @Override
@@ -79,15 +89,25 @@ public class SongActivity extends AppCompatActivity {
         positionBar = findViewById(R.id.positionBar);*/
         /*mp = new MediaPlayer();*/
 
-        Intent intent = getIntent();
+
+
+        intent = getIntent();
         urlSong = intent.getStringExtra("Id");
+        title = intent.getStringExtra("Title");
+        activity = intent.getStringExtra("context");
+
+        database = FirebaseDatabase.getInstance();
+        auth = FirebaseAuth.getInstance();
+        FirebaseUser user = auth.getCurrentUser();
+        songsDatabaseReference = database.getReference().child("SongsFav").child(user.getUid());
+
+
         /*titleTextView.setText(intent.getStringExtra("Title"));
         groupTextView.setText(intent.getStringExtra("Group"));*/
         /*Picasso.get().load(intent.getStringExtra("Image")).fit().centerInside()
                 .into(imageView);*/
 
         //CreateMpAsyncTask createMpAsyncTask = (CreateMpAsyncTask) new CreateMpAsyncTask().execute();
-
 
 
     }
@@ -164,176 +184,89 @@ public class SongActivity extends AppCompatActivity {
                 .createMediaSource(uri);
     }
 
-    public void createMediaPlayer() throws IOException {
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater inflater = getMenuInflater();
+        if(Act.act==1){
+            inflater.inflate(R.menu.menu_item, menu);
+        }else if(Act.act==2){
+            inflater.inflate(R.menu.menu_item_fav, menu);
+        }
 
 
 
-                /*totalTime = mp.getDuration();
-                if (!isClosed) {*/
-
-                    /*mp.setLooping(true);
-                    mp.seekTo(0);
-                    mp.setVolume(0.5f, 0.5f);*/
-        /*float speed = 0.75f;
-        mp.setPlaybackParams(mp.getPlaybackParams().setSpeed(speed));*/
-/*
-                    remainingTimeLabel.setText(totalTime(totalTime));
-                    positionBar = findViewById(R.id.positionBar);
-                    positionBar.setMax(totalTime);
-                    positionBar.setOnSeekBarChangeListener(
-                            new SeekBar.OnSeekBarChangeListener() {
-                                @Override
-                                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                                    if (fromUser) {
-                                        mp.seekTo(progress);
-                                        positionBar.setProgress(progress);
-                                    }
-                                    long progressInMillis = progress;
-                                    updateTimer(progressInMillis);
-                                }
-
-                                @Override
-                                public void onStartTrackingTouch(SeekBar seekBar) {
-
-                                }
-
-                                @Override
-                                public void onStopTrackingTouch(SeekBar seekBar) {
-
-                                }
-                            }
-                    );
-                    setCountDownTimer();
-
-                } else {
-
-                }*/
-
-
-
-
-
-
-
-
-
+        return true;
     }
 
-    /*public void setCountDownTimer() {
-        countDownTimer = new CountDownTimer(totalTime, 10) {
+
+    public void listener() {
+
+
+        listener = (new ValueEventListener() {
             @Override
-            public void onTick(long millisUntilFinished) {
-                if (!isClosed) {
-                    positionBar.setProgress(mp.getCurrentPosition());
-                    Log.e("timer", "timer");
-                } else {
-                    countDownTimer.cancel();
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                    if (dataSnapshot1.child("title").getValue().equals(title)) {
+                        isAdded = true;
+                        break;
+                    } else {
+                        isAdded = false;
+
+                    }
+
                 }
 
+
+                if (isAdded == false) {
+                    songsDatabaseReference.removeEventListener(listener);
+                    Song song = new Song();
+                    song.setTitle(intent.getStringExtra("Title"));
+                    song.setId(urlSong);
+                    song.setGroup(intent.getStringExtra("Group"));
+                    song.setImage(intent.getStringExtra("Image"));
+                    songsDatabaseReference.push().setValue(song);
+                    Toast.makeText(SongActivity.this, "Song - " + title + " is added", Toast.LENGTH_LONG).show();
+                    songsDatabaseReference.removeEventListener(listener);
+                } else {
+                    Toast.makeText(SongActivity.this, "Song is Already Added", Toast.LENGTH_LONG).show();
+                    songsDatabaseReference.removeEventListener(listener);
+                }
+
+
             }
 
             @Override
-            public void onFinish() {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        };
-
-        countDownTimer.start();
-
-    }*/
 
 
-    private void updateTimer(long millisUntilFinished) {
-        long minutes = millisUntilFinished / 1000 / 60;
-        long seconds = millisUntilFinished / 1000 - (minutes * 60);
+        });
 
-        String minutesString = "";
-        String secondsString = "";
-
-        if (minutes < 10) minutesString = "0" + minutes;
-        else minutesString = String.valueOf(minutes);
-
-        if (seconds < 10) secondsString = "0" + seconds;
-        else secondsString = String.valueOf(seconds);
-
-        elapsedTimeLabel.setText(minutesString + ":" + secondsString);
+        songsDatabaseReference.addValueEventListener(listener);
     }
 
-    private String totalTime(long millisUntilFinished) {
-        long minutes = millisUntilFinished / 1000 / 60;
-        long seconds = millisUntilFinished / 1000 - (minutes * 60);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
-        String minutesString = "";
-        String secondsString = "";
-
-        if (minutes < 10) minutesString = "0" + minutes;
-        else minutesString = String.valueOf(minutes);
-
-        if (seconds < 10) secondsString = "0" + seconds;
-        else secondsString = String.valueOf(seconds);
-
-        return (minutesString + ":" + secondsString);
-    }
+        switch (item.getItemId()) {
+            case R.id.addSong:
+                listener();
 
 
-    /*@Override
-    protected void onStop() {
-        super.onStop();
-
-        isClosed = true;
-        if (mp != null) {
-            mp.release();
-        }
-        finish();
+                return true;
+            case R.id.deleteSong:
 
 
-    }*/
-
-    /*@Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        isClosed = true;
-        if (mp != null) {
-            mp.release();
-        }
-        finish();
-    }*/
-
-    /*public void playButton(View view) {
-
-        if (mp != null) {
-            if (!mp.isPlaying()) {
-                // Stopping
-                mp.start();
-                playButton.setImageResource(R.drawable.stop);
-
-            } else {
-                mp.pause();
-                playButton.setImageResource(R.drawable.play);
-            }
+            default:
+                return super.onOptionsItemSelected(item);
         }
 
     }
 
-
-    private class CreateMpAsyncTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-                createMediaPlayer();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-        }
-    }*/
 
 }

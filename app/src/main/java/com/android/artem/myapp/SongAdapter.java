@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
     public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> {
 
-        private DatabaseReference songsDatabaseReference;
-        private FirebaseAuth auth;
+
         private Context mContext;
         private List<Song> mData;
 
@@ -53,7 +53,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
             holder.titleTextView.setText(mData.get(position).getTitle());
             holder.groupTextView.setText(mData.get(position).getGroup());
-            if(mContext instanceof SearchListActivity) {
+
+            Picasso.get().load(mData.get(position).getImage()).fit().centerInside()
+                    .into(holder.previewImageView);
+
+            /*if(mContext instanceof SearchListActivity) {
                 holder.addSongImageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -73,7 +77,7 @@ import androidx.recyclerview.widget.RecyclerView;
                 });
             }else{
                 holder.addSongImageView.setVisibility(View.GONE);
-            }
+            }*/
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -84,8 +88,12 @@ import androidx.recyclerview.widget.RecyclerView;
                     intent.putExtra("Group", mData.get(position).getGroup());
                     intent.putExtra("Id", mData.get(position).getId());
                     intent.putExtra("Image", mData.get(position).getImage());
-
-                    //start activity
+                    intent.putExtra("context", String.valueOf(mContext));
+                   if(mContext instanceof SearchListActivity) {
+                    intent.putExtra("context", "1");
+                   }else{
+                       intent.putExtra("context", "2");
+                   }
                     mContext.startActivity(intent);
                 }
             });
@@ -99,9 +107,10 @@ import androidx.recyclerview.widget.RecyclerView;
         public static class MyViewHolder extends RecyclerView.ViewHolder{
 
             private TextView titleTextView, groupTextView;
-            //private ImageView previewImageView;
+            private ImageView previewImageView;
             private CardView cardView;
-            private ImageView addSongImageView;
+
+            //private ImageView addSongImageView;
 
             public MyViewHolder(View itemView){
                 super(itemView);
@@ -110,9 +119,12 @@ import androidx.recyclerview.widget.RecyclerView;
                 titleTextView = itemView.findViewById(R.id.titleTextView);
                 groupTextView = itemView.findViewById(R.id.groupTextView);
                 cardView = (CardView) itemView.findViewById(R.id.cardView);
-                addSongImageView = itemView.findViewById(R.id.addSongImageView);
+                previewImageView = itemView.findViewById(R.id.previewImageView);
 
-                //previewImageView = itemView.findViewById(R.id.previewImageView);
+
+                //addSongImageView = itemView.findViewById(R.id.addSongImageView);
+
+
 
             }
         }

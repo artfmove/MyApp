@@ -44,7 +44,7 @@ public class FavouriteListActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
-
+        Act.act = 2;
 
 
         songsDatabaseReference = FirebaseDatabase.getInstance().getReference().child("SongsFav").child(user.getUid());

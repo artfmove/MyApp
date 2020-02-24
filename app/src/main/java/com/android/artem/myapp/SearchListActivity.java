@@ -68,6 +68,7 @@ public class SearchListActivity extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance();
         //storage = FirebaseStorage.getInstance();
+        Act.act=1;
 
         //usersDatabaseReference = database.getReference().child("users");
         songsDatabaseReference = database.getReference().child("Songs");
