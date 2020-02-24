@@ -60,14 +60,14 @@ public class SongActivity extends AppCompatActivity {
     private boolean isAdded = true;
 
 
-    private boolean playWhenReady;
+    private boolean playWhenReady = true;
     private int currentWindow = 0;
     private long playbackPosition = 0;
     private PlayerView playerView;
     private SimpleExoPlayer player;
 
     private Intent intent;
-    private String activity;
+
 
 
     @Override
@@ -78,23 +78,17 @@ public class SongActivity extends AppCompatActivity {
 
 
         /*titleTextView = findViewById(R.id.titleTextView);
-        groupTextView = findViewById(R.id.groupTextView);*/
-        /*elapsedTimeLabel = findViewById(R.id.elapsedTimeLabel);
-        remainingTimeLabel = findViewById(R.id.remainingTimeLabel);
+        groupTextView = findViewById(R.id.groupTextView);
         imageView = findViewById(R.id.imageView);*/
 
         playerView = findViewById(R.id.video_view);
 
-        /*playButton = findViewById(R.id.playButton);
-        positionBar = findViewById(R.id.positionBar);*/
-        /*mp = new MediaPlayer();*/
-
-
-
         intent = getIntent();
         urlSong = intent.getStringExtra("Id");
         title = intent.getStringExtra("Title");
-        activity = intent.getStringExtra("context");
+
+
+
 
         database = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
@@ -107,7 +101,7 @@ public class SongActivity extends AppCompatActivity {
         /*Picasso.get().load(intent.getStringExtra("Image")).fit().centerInside()
                 .into(imageView);*/
 
-        //CreateMpAsyncTask createMpAsyncTask = (CreateMpAsyncTask) new CreateMpAsyncTask().execute();
+
 
 
     }
@@ -194,16 +188,11 @@ public class SongActivity extends AppCompatActivity {
         }else if(Act.act==2){
             inflater.inflate(R.menu.menu_item_fav, menu);
         }
-
-
-
         return true;
     }
 
 
     public void listener() {
-
-
         listener = (new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -256,15 +245,18 @@ public class SongActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.addSong:
                 listener();
-
-
                 return true;
             case R.id.deleteSong:
-
+                deleteSong();
 
             default:
                 return super.onOptionsItemSelected(item);
         }
+
+    }
+
+    private void deleteSong() {
+        
 
     }
 
