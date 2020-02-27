@@ -1,4 +1,4 @@
-package com.android.artem.myapp;
+package com.android.artem.myapp.activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -7,12 +7,11 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.InputFilter;
-import android.text.TextWatcher;
-import android.widget.EditText;
-import android.widget.ImageButton;
 
+import com.android.artem.myapp.util.Act;
+import com.android.artem.myapp.R;
+import com.android.artem.myapp.model.Song;
+import com.android.artem.myapp.adapter.SongAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;

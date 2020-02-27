@@ -1,18 +1,13 @@
-package com.android.artem.myapp;
+package com.android.artem.myapp.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.media.PlaybackParams;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,6 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.android.artem.myapp.util.Act;
+import com.android.artem.myapp.R;
+import com.android.artem.myapp.model.Song;
 import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -40,9 +38,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
 
 
 public class SongActivity extends AppCompatActivity {
@@ -138,8 +133,7 @@ public class SongActivity extends AppCompatActivity {
                 .load(urlImage) // image url
                 .placeholder(R.drawable.ic_music_note_black_24dp) // any placeholder to load at start
                 .error(R.drawable.ic_music_note_black_24dp)  // any image in case of error
-                .override(200, 200) // resizing
-        .centerCrop()
+                 // resizing
         .into(previewImageView);
 
         param = new PlaybackParams();
@@ -147,8 +141,6 @@ public class SongActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
         songsDatabaseReference = database.getReference().child("SongsFav").child(user.getUid());
-
-
     }
 
     private void initializePlayer() {

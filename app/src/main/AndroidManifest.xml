@@ -11,14 +11,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FavouriteListActivity"
+        <activity android:name=".activities.FavouriteListActivity"
             android:label="Your Song List"></activity>
-        <activity android:name=".SongActivity" />
+        <activity android:name=".activities.SongActivity" />
         <activity
-            android:name=".SearchListActivity"
+            android:name=".activities.SearchListActivity"
             android:label="Choose Song" />
-        <activity android:name=".SignInActivity" />
-        <activity android:name=".SplashScreenActivity">
+        <activity android:name=".activities.SignInActivity" />
+        <activity android:name=".activities.SplashScreenActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

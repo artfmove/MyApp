@@ -1,4 +1,4 @@
-package com.android.artem.myapp;
+package com.android.artem.myapp.util;
 
 public class Act {
     public static int act;

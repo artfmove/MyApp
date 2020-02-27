@@ -1,4 +1,4 @@
-package com.android.artem.myapp;
+package com.android.artem.myapp.model;
 
 public class Song {
     public String title;
