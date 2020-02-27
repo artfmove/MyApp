@@ -44,7 +44,6 @@ public class FavouriteListActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
-        Act.act = 2;
 
 
         songsDatabaseReference = FirebaseDatabase.getInstance().getReference().child("SongsFav").child(user.getUid());
@@ -61,7 +60,11 @@ public class FavouriteListActivity extends AppCompatActivity {
 
     }
 
-
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        Act.act=2;
+    }
 
     public void loadSongs(){
         songsChildEventListener = new ChildEventListener() {

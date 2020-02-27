@@ -7,129 +7,231 @@
     android:orientation="vertical"
     tools:context=".SongActivity">
 
-    <LinearLayout
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1">
+
+    <ImageView
+        android:id="@+id/previewImageView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_gravity="center_horizontal"
+        app:srcCompat="@drawable/ic_music_note_black_24dp"
+        tools:layout_editor_absoluteX="136dp" />
+
+    <TextView
+        android:id="@+id/titleTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:text="Title"
+        android:textSize="40sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/groupTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:text="Group"
+        android:textSize="30sp"
+        android:textStyle="italic" />
+
+</LinearLayout>
+
+    <LinearLayout
+        android:gravity="bottom"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+
+        <TextView
+            android:id="@+id/speedTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:text="34"
+            android:textStyle="bold"
+            android:textSize="40sp"/>
+
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:max="5"
+        android:id="@+id/speedSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:progress="5"/>
+
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="50dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="30dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="19sp"
+            android:text="0.5"/>
+        <TextView
+            android:gravity="end"
+            android:textSize="19sp"
+            android:text="1.0"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
         <com.google.android.exoplayer2.ui.PlayerView
+            android:layout_gravity="bottom"
             android:id="@+id/video_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="100dp"
+            android:layout_alignParentBottom="true"
+            app:controller_layout_id="@layout/custom_playback_control"
+            app:hide_on_touch="false"
+            app:show_timeout="0" />
 
-        <!--<ImageView
-            android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_gravity="center_horizontal"
-            app:srcCompat="@drawable/ic_music_note_black_24dp"
-            tools:layout_editor_absoluteX="136dp" />
 
-        <TextView
-            android:id="@+id/titleTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center_horizontal"
-            android:text="Title"
-            android:textSize="40sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/groupTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center_horizontal"
-            android:text="Group"
-            android:textSize="30sp"
-            android:textStyle="italic" />
     </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!--<ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_gravity="center_horizontal"
+        app:srcCompat="@drawable/ic_music_note_black_24dp"
+        tools:layout_editor_absoluteX="136dp" />
+
+    <TextView
+        android:id="@+id/titleTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:text="Title"
+        android:textSize="40sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/groupTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:text="Group"
+        android:textSize="30sp"
+        android:textStyle="italic" />
+</LinearLayout>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:layout_weight="1"
+    android:gravity="bottom"
+    android:orientation="vertical">
+
+    <SeekBar
+        android:id="@+id/positionBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginVertical="30dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="1"
-        android:gravity="bottom"
-        android:orientation="vertical">
+        android:layout_marginBottom="70dp"
+        android:orientation="horizontal">
 
-        <SeekBar
-            android:id="@+id/positionBar"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/elapsedTimeLabel"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="30dp"
-            android:layout_marginVertical="30dp" />
+            android:layout_marginStart="30dp"
+            android:layout_weight="1"
+            android:width="0dp"
+            android:text="00:00"
+            android:textSize="25sp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/remainingTimeLabel"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="70dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/elapsedTimeLabel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:layout_weight="1"
-                android:width="0dp"
-                android:text="00:00"
-                android:textSize="25sp" />
-
-            <TextView
-                android:id="@+id/remainingTimeLabel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="30dp"
-                android:layout_weight="1"
-                android:width="0dp"
-                android:gravity="end"
-                android:text="00:00"
-                android:textSize="25sp" />
-
-        </LinearLayout>
-
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0.50"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_marginLeft="30dp"
-                android:layout_centerVertical="true"/>
-
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0.75"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_marginEnd="15dp"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/playButton"/>
-
-            <ImageView
-                android:id="@+id/playButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:onClick="playButton"
-                android:src="@drawable/stop"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                />
-
-        </RelativeLayout>-->
+            android:layout_marginEnd="30dp"
+            android:layout_weight="1"
+            android:width="0dp"
+            android:gravity="end"
+            android:text="00:00"
+            android:textSize="25sp" />
 
     </LinearLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.50"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginLeft="30dp"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.75"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginEnd="15dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/playButton"/>
+
+        <ImageView
+            android:id="@+id/playButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:onClick="playButton"
+            android:src="@drawable/stop"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            />
+
+    </RelativeLayout>-->
+
 
 </LinearLayout>

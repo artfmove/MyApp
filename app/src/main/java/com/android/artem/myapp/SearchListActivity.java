@@ -68,7 +68,7 @@ public class SearchListActivity extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance();
         //storage = FirebaseStorage.getInstance();
-        Act.act=1;
+
 
         //usersDatabaseReference = database.getReference().child("users");
         songsDatabaseReference = database.getReference().child("Songs");
@@ -112,16 +112,22 @@ public class SearchListActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        Act.act=1;
+    }
+
     private void searchSongs() {
 
-        final String queryString = searchEditText.getText().toString().trim();
+        final String queryString = searchEditText.getText().toString().trim().toUpperCase();
         favouriteArrayList.clear();
         songsDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){
-                    if(dataSnapshot1.child("title").getValue().equals(queryString)) {
+                    if(dataSnapshot1.child("title").getValue().toString().toUpperCase().equals(queryString)) {
 
                         Song song = dataSnapshot1.getValue(Song.class);
 

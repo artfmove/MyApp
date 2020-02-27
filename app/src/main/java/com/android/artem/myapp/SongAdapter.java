@@ -84,10 +84,10 @@ import androidx.recyclerview.widget.RecyclerView;
                     Intent intent = new Intent(mContext, SongActivity.class);
 
                     //passing data to book activity
-                    intent.putExtra("Title", mData.get(position).getTitle());
-                    intent.putExtra("Group", mData.get(position).getGroup());
-                    intent.putExtra("Id", mData.get(position).getId());
-                    intent.putExtra("Image", mData.get(position).getImage());
+                    intent.putExtra("title", mData.get(position).getTitle());
+                    intent.putExtra("group", mData.get(position).getGroup());
+                    intent.putExtra("id", mData.get(position).getId());
+                    intent.putExtra("image", mData.get(position).getImage());
                     intent.putExtra("context", String.valueOf(mContext));
                    if(mContext instanceof SearchListActivity) {
                     intent.putExtra("context", "1");

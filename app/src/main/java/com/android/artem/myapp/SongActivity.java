@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.PlaybackParams;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,7 +23,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
@@ -39,24 +42,26 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 
 public class SongActivity extends AppCompatActivity {
 
 
-    private TextView titleTextView, groupTextView;
-    private ImageView imageView;
+    private TextView titleTextView, groupTextView, speedTextView;
+    private ImageView previewImageView;
+    private SeekBar speedSeekbar;
 
 
     private DatabaseReference songsDatabaseReference;
     private FirebaseAuth auth;
     private FirebaseDatabase database;
     private ValueEventListener listener;
+    private ValueEventListener deleteListener;
 
 
-    private String urlSong;
-    private String title;
-    private String group;
+    private String urlSong, urlImage, title, group;
+
     private boolean isAdded = true;
 
 
@@ -69,39 +74,79 @@ public class SongActivity extends AppCompatActivity {
     private Intent intent;
 
 
+    private PlaybackParams param;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_song);
-
-
-
-        /*titleTextView = findViewById(R.id.titleTextView);
+        speedSeekbar = findViewById(R.id.speedSeekBar);
+        speedTextView = findViewById(R.id.speedTextView);
+        titleTextView = findViewById(R.id.titleTextView);
         groupTextView = findViewById(R.id.groupTextView);
-        imageView = findViewById(R.id.imageView);*/
+        previewImageView = findViewById(R.id.previewImageView);
+
+
+        speedSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                int val = (progress * (seekBar.getWidth() - 2 * seekBar.getThumbOffset())) / seekBar.getMax();
+                progress++;
+                if(progress==6) {
+                    progress=10;
+                    speedTextView.setText("1.0");
+                }
+                else {
+                    progress+=4;
+                    speedTextView.setText("0."+ progress);
+                }
+
+                speedTextView.setX(seekBar.getX() + val + seekBar.getThumbOffset() / 2-20);
+
+                PlaybackParameters param = new PlaybackParameters(progress/10f);
+                player.setPlaybackParameters(param);
+                speedTextView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                speedTextView.setVisibility(View.INVISIBLE);
+            }
+
+        });
+
+
 
         playerView = findViewById(R.id.video_view);
 
         intent = getIntent();
-        urlSong = intent.getStringExtra("Id");
-        title = intent.getStringExtra("Title");
+        title = intent.getStringExtra("title");
+        titleTextView.setText(title);
+        groupTextView.setText(intent.getStringExtra("group"));
+        urlImage = intent.getStringExtra("image");
+        urlSong = intent.getStringExtra("id");
 
 
 
+        Glide.with(this)
+                .load(urlImage) // image url
+                .placeholder(R.drawable.ic_music_note_black_24dp) // any placeholder to load at start
+                .error(R.drawable.ic_music_note_black_24dp)  // any image in case of error
+                .override(200, 200) // resizing
+        .centerCrop()
+        .into(previewImageView);
 
+        param = new PlaybackParams();
         database = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
         songsDatabaseReference = database.getReference().child("SongsFav").child(user.getUid());
-
-
-        /*titleTextView.setText(intent.getStringExtra("Title"));
-        groupTextView.setText(intent.getStringExtra("Group"));*/
-        /*Picasso.get().load(intent.getStringExtra("Image")).fit().centerInside()
-                .into(imageView);*/
-
-
 
 
     }
@@ -110,6 +155,8 @@ public class SongActivity extends AppCompatActivity {
         player = ExoPlayerFactory.newSimpleInstance(this);
         playerView.setPlayer(player);
         Uri uri = Uri.parse(urlSong);
+        //Uri uri = Uri.parse("https://files.freemusicarchive.org/storage-freemusicarchive-org/music/KEXP/Summer_Babes/KEXP_Live_Feb_2011/Summer_Babes_-_15_-_Home_Alone_II_Live__KEXP.mp3");
+
         MediaSource mediaSource = buildMediaSource(uri);
 
         player.setPlayWhenReady(playWhenReady);
@@ -137,7 +184,7 @@ public class SongActivity extends AppCompatActivity {
     @SuppressLint("InlinedApi")
     private void hideSystemUi() {
         playerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                /*| View.SYSTEM_UI_FLAG_FULLSCREEN*/
+                //| View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -183,9 +230,9 @@ public class SongActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
 
         MenuInflater inflater = getMenuInflater();
-        if(Act.act==1){
+        if (Act.act == 1) {
             inflater.inflate(R.menu.menu_item, menu);
-        }else if(Act.act==2){
+        } else if (Act.act == 2) {
             inflater.inflate(R.menu.menu_item_fav, menu);
         }
         return true;
@@ -197,35 +244,45 @@ public class SongActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-
-                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    if (dataSnapshot1.child("title").getValue().equals(title)) {
-                        isAdded = true;
-                        break;
-                    } else {
-                        isAdded = false;
-
-                    }
-
-                }
-
-
-                if (isAdded == false) {
-                    songsDatabaseReference.removeEventListener(listener);
+                if (!dataSnapshot.exists()) {
                     Song song = new Song();
-                    song.setTitle(intent.getStringExtra("Title"));
+                    song.setTitle(intent.getStringExtra("title"));
                     song.setId(urlSong);
-                    song.setGroup(intent.getStringExtra("Group"));
-                    song.setImage(intent.getStringExtra("Image"));
+                    song.setGroup(intent.getStringExtra("group"));
+                    song.setImage(intent.getStringExtra("image"));
                     songsDatabaseReference.push().setValue(song);
                     Toast.makeText(SongActivity.this, "Song - " + title + " is added", Toast.LENGTH_LONG).show();
                     songsDatabaseReference.removeEventListener(listener);
                 } else {
-                    Toast.makeText(SongActivity.this, "Song is Already Added", Toast.LENGTH_LONG).show();
-                    songsDatabaseReference.removeEventListener(listener);
+
+
+                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                        if (dataSnapshot1.child("title").getValue().equals(title)) {
+                            isAdded = true;
+                            break;
+                        } else {
+                            isAdded = false;
+
+                        }
+
+                    }
+                    if (isAdded == false) {
+                        songsDatabaseReference.removeEventListener(listener);
+                        Song song = new Song();
+                        song.setTitle(intent.getStringExtra("title"));
+                        song.setId(urlSong);
+                        song.setGroup(intent.getStringExtra("group"));
+                        song.setImage(intent.getStringExtra("image"));
+                        songsDatabaseReference.push().setValue(song);
+                        Toast.makeText(SongActivity.this, "Song - " + title + " is added", Toast.LENGTH_LONG).show();
+                        songsDatabaseReference.removeEventListener(listener);
+                    } else {
+                        Toast.makeText(SongActivity.this, "Song is Already Added", Toast.LENGTH_LONG).show();
+                        songsDatabaseReference.removeEventListener(listener);
+                    }
+
+
                 }
-
-
             }
 
             @Override
@@ -256,7 +313,36 @@ public class SongActivity extends AppCompatActivity {
     }
 
     private void deleteSong() {
-        
+        deleteListener = (new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                    if (dataSnapshot1.child("title").getValue().equals(title)) {
+                        dataSnapshot1.getRef().removeValue();
+                        Toast.makeText(SongActivity.this, "Delete", Toast.LENGTH_SHORT).show();
+                        songsDatabaseReference.removeEventListener(deleteListener);
+                        break;
+                    } else {
+
+                        songsDatabaseReference.removeEventListener(deleteListener);
+                    }
+
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+
+        });
+
+        songsDatabaseReference.addValueEventListener(deleteListener);
 
     }
 
