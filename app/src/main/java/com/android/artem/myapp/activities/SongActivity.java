@@ -315,6 +315,7 @@ public class SongActivity extends AppCompatActivity {
                         dataSnapshot1.getRef().removeValue();
                         Toast.makeText(SongActivity.this, "Delete", Toast.LENGTH_SHORT).show();
                         songsDatabaseReference.removeEventListener(deleteListener);
+                        finish();
                         break;
                     } else {
 

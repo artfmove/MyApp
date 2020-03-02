@@ -83,11 +83,11 @@ import androidx.recyclerview.widget.RecyclerView;
                     intent.putExtra("id", mData.get(position).getId());
                     intent.putExtra("image", mData.get(position).getImage());
                     intent.putExtra("context", String.valueOf(mContext));
-                   if(mContext instanceof SearchListActivity) {
+                  /* if(mContext instanceof SearchListActivity) {
                     intent.putExtra("context", "1");
                    }else{
                        intent.putExtra("context", "2");
-                   }
+                   }*/
                     mContext.startActivity(intent);
                 }
             });

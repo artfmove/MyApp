@@ -51,6 +51,7 @@ public class SignInActivity extends AppCompatActivity {
 
 
         database = FirebaseDatabase.getInstance();
+        auth = FirebaseAuth.getInstance();
         usersDatabaseReference = FirebaseDatabase.getInstance().getReference().child("users");
 
         textInputEmail = findViewById(R.id.textInputEmail);
@@ -115,7 +116,7 @@ public class SignInActivity extends AppCompatActivity {
 
     public void loginSignUpUser(View view) {
 
-        if(!validateEmail() | !validateName() | !validatePassword()){
+        if(!validateEmail() | !validatePassword()){
             return;
         }
 
@@ -129,7 +130,7 @@ public class SignInActivity extends AppCompatActivity {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "signInWithEmail:success");
                                 FirebaseUser user = auth.getCurrentUser();
-                                startActivity(new Intent(SignInActivity.this, SearchListActivity.class));
+                                startActivity(new Intent(SignInActivity.this, MainActivity.class));
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -155,7 +156,7 @@ public class SignInActivity extends AppCompatActivity {
                                 Log.d(TAG, "createUserWithEmail:success");
                                 FirebaseUser user = auth.getCurrentUser();
                                 createUser(user);
-                                startActivity(new Intent(SignInActivity.this, SearchListActivity.class));
+                                startActivity(new Intent(SignInActivity.this, MainActivity.class));
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "createUserWithEmail:failure", task.getException());
@@ -196,11 +197,13 @@ public class SignInActivity extends AppCompatActivity {
             loginSignUpButton.setText("Sign Up");
             toggleLoginSignUpTextView.setText("Or, log in ");
             textInputConfirmPassword.setVisibility(View.VISIBLE);
+            textInputName.setVisibility(View.VISIBLE);
         }else{
 
             isLoginModeActive = true;
             loginSignUpButton.setText("Log In");
             toggleLoginSignUpTextView.setText("Or, sign up");
+            textInputName.setVisibility(View.GONE);
             textInputConfirmPassword.setVisibility(View.GONE);
         }
     }

@@ -39,7 +39,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         logo3ImageView.setAnimation(rotate);
         logo4ImageView.setAnimation(rotateBack);
 
-        /*Thread thread = new Thread(){
+        Thread thread = new Thread(){
             @Override
             public void run(){
                 try {
@@ -49,7 +49,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                 }finally {
                     auth = FirebaseAuth.getInstance();
                     if(auth.getCurrentUser() !=null){
-                        startActivity(new Intent(SplashScreenActivity.this, SearchListActivity.class));
+                        startActivity(new Intent(SplashScreenActivity.this, MainActivity.class));
                     }else{
                         startActivity(new Intent(SplashScreenActivity.this, SignInActivity.class));
                     }
@@ -57,8 +57,8 @@ public class SplashScreenActivity extends AppCompatActivity {
                 }
             }
         };
-        thread.start();*/
-        startActivity(new Intent(SplashScreenActivity.this, SearchListActivity.class));
+        thread.start();
+        //startActivity(new Intent(SplashScreenActivity.this, MainActivity.class));
     }
 
     @Override

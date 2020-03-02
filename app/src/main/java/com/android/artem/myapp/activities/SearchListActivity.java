@@ -3,6 +3,7 @@ package com.android.artem.myapp.activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,11 +12,15 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.android.artem.myapp.util.Act;
 import com.android.artem.myapp.R;
@@ -33,7 +38,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchListActivity extends AppCompatActivity {
+public class SearchListActivity extends Fragment {
 
     private DatabaseReference songsDatabaseReference;
     private DatabaseReference usersDatabaseReference;
@@ -56,12 +61,19 @@ public class SearchListActivity extends AppCompatActivity {
     private EditText searchEditText;
     private ImageButton searchImageButton;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_list);
 
-        searchEditText = findViewById(R.id.searchEditText);
+
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_search_list, container, false);
+
+
+
+
+
+        searchEditText = view.findViewById(R.id.searchEditText);
         changesTextSearchEditText();
 
         auth = FirebaseAuth.getInstance();
@@ -74,12 +86,12 @@ public class SearchListActivity extends AppCompatActivity {
         songsDatabaseReference = database.getReference().child("Songs");
 
         favouriteArrayList = new ArrayList<>();
-        favouriteSongAdapter = new SongAdapter(this, favouriteArrayList);
+        favouriteSongAdapter = new SongAdapter(getContext(), favouriteArrayList);
 
         songsArrayList = new ArrayList<>();
-        songAdapter = new SongAdapter(this, songsArrayList);
-        songRecyclerView = findViewById(R.id.recyclerView);
-        songRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+        songAdapter = new SongAdapter(getContext(), songsArrayList);
+        songRecyclerView = view.findViewById(R.id.recyclerView);
+        songRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
         songRecyclerView.setAdapter(songAdapter);
 
 
@@ -91,10 +103,9 @@ public class SearchListActivity extends AppCompatActivity {
         song.setImage("https://firebasestorage.googleapis.com/v0/b/myapp-72b61.appspot.com/o/image%2Fmaroon5.jpg?alt=media&token=cb23f06c-371a-43ef-928c-f75fcd581bd0");
         //songsDatabaseReference.push().setValue(song);
 
-
-
+       
         loadSongs();
-        Thread thread = new Thread(){
+        /*Thread thread = new Thread(){
             @Override
             public void run(){
                 try {
@@ -106,15 +117,17 @@ public class SearchListActivity extends AppCompatActivity {
                 }
             }
         };
-        thread.start();
+        thread.start();*/
 
-
+        return view;
 
     }
 
+
+
     @Override
-    protected void onPostResume() {
-        super.onPostResume();
+    public void onResume() {
+        super.onResume();
         Act.act=1;
     }
 
@@ -127,7 +140,7 @@ public class SearchListActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){
-                    if(dataSnapshot1.child("title").getValue().toString().toUpperCase().equals(queryString)) {
+                    if(dataSnapshot1.child("title").getValue().toString().toUpperCase().contains(queryString)) {
 
                         Song song = dataSnapshot1.getValue(Song.class);
 
@@ -149,6 +162,7 @@ public class SearchListActivity extends AppCompatActivity {
 
             }
         });
+        songsDatabaseReference.removeEventListener(songsChildEventListener);
     }
 
     private void changesTextSearchEditText() {
@@ -164,14 +178,14 @@ public class SearchListActivity extends AppCompatActivity {
 
                     searchSongs();
                 }else{
-
+                    searchEditText.clearFocus();
                     songRecyclerView.setAdapter(songAdapter);
                 }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                searchEditText.setCursorVisible(false);
             }
         });
 
@@ -225,28 +239,6 @@ public class SearchListActivity extends AppCompatActivity {
 
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.favouriteListSong:
-                startActivity(new Intent(SearchListActivity.this, FavouriteListActivity.class));
-                return true;
-            case R.id.signOut:
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(SearchListActivity.this, SignInActivity.class));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-
-    }
 
 
     /*public void download(){
