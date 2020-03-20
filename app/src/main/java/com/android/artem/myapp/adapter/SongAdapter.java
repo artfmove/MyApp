@@ -12,6 +12,8 @@ import com.android.artem.myapp.R;
 import com.android.artem.myapp.model.Song;
 import com.android.artem.myapp.activities.SearchListActivity;
 import com.android.artem.myapp.activities.SongActivity;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -48,9 +50,16 @@ import androidx.recyclerview.widget.RecyclerView;
             holder.titleTextView.setText(mData.get(position).getTitle());
             holder.groupTextView.setText(mData.get(position).getGroup());
 
-            Picasso.get().load(mData.get(position).getImage()).fit().centerInside()
+           /* Picasso.get().load(mData.get(position).getImage()).fit().centerInside()
                     .into(holder.previewImageView);
-
+            */
+            Glide.with(mContext)
+                    .load(mData.get(position).getImage()) // image url
+                    .apply(RequestOptions.circleCropTransform())
+                    .placeholder(R.drawable.ic_music_note_white_24dp) // any placeholder to load at start
+                    .error(R.drawable.ic_music_note_white_24dp)  // any image in case of error
+                    // resizing
+                    .into(holder.previewImageView);
             /*if(mContext instanceof SearchListActivity) {
                 holder.addSongImageView.setOnClickListener(new View.OnClickListener() {
                     @Override

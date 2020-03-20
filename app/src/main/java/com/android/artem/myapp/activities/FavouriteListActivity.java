@@ -38,6 +38,7 @@ public class FavouriteListActivity extends Fragment {
     private RecyclerView songRecyclerView;
     private SongAdapter songAdapter;
     private RecyclerView.LayoutManager songLayoutManager;
+    private int columntCount;
 
 
     @Nullable
@@ -48,14 +49,14 @@ public class FavouriteListActivity extends Fragment {
 
         auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
-
+        columntCount = getResources().getInteger(R.integer.column_count);
 
         songsDatabaseReference = FirebaseDatabase.getInstance().getReference().child("SongsFav").child(user.getUid());
 
         songsArrayList = new ArrayList<>();
         songRecyclerView = view.findViewById(R.id.recyclerView);
         songAdapter = new SongAdapter(getContext(), songsArrayList);
-        songRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
+        songRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), columntCount));
         songRecyclerView.setAdapter(songAdapter);
 
 

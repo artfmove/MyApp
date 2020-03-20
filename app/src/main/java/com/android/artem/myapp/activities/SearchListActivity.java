@@ -57,6 +57,7 @@ public class SearchListActivity extends Fragment {
     private SongAdapter favouriteSongAdapter;
 
     private String userKey;
+    private int columntCount;
 
     private EditText searchEditText;
     private ImageButton searchImageButton;
@@ -69,6 +70,7 @@ public class SearchListActivity extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_search_list, container, false);
 
+        columntCount = getResources().getInteger(R.integer.column_count);
 
 
 
@@ -91,7 +93,7 @@ public class SearchListActivity extends Fragment {
         songsArrayList = new ArrayList<>();
         songAdapter = new SongAdapter(getContext(), songsArrayList);
         songRecyclerView = view.findViewById(R.id.recyclerView);
-        songRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
+        songRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), columntCount));
         songRecyclerView.setAdapter(songAdapter);
 
 

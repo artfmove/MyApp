@@ -15,7 +15,7 @@
         <activity
             android:name=".activities.FavouriteListActivity"
             android:label="Your Song List" />
-        <activity android:name=".activities.SongActivity" />
+        <activity android:name=".activities.SongActivity"/>
         <activity
             android:name=".activities.SearchListActivity"
             android:label="Choose Song" />
