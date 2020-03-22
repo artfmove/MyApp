@@ -8,9 +8,13 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.artem.myapp.util.Act;
@@ -24,6 +28,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +44,8 @@ public class FavouriteListActivity extends Fragment {
     private SongAdapter songAdapter;
     private RecyclerView.LayoutManager songLayoutManager;
     private int columntCount;
+
+    private EditText searchEditText;
 
 
     @Nullable
@@ -59,7 +66,8 @@ public class FavouriteListActivity extends Fragment {
         songRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), columntCount));
         songRecyclerView.setAdapter(songAdapter);
 
-
+        searchEditText = view.findViewById(R.id.searchEditText);
+        changesTextSearchEditText();
 
         return view;
 
@@ -78,6 +86,67 @@ public class FavouriteListActivity extends Fragment {
         super.onResume();
         loadSongs();
         Act.act=2;
+    }
+
+    private void searchSongs() {
+
+        final String queryString = searchEditText.getText().toString().trim().toUpperCase();
+        songsArrayList.clear();
+        songsDatabaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){
+                    if(dataSnapshot1.child("title").getValue().toString().toUpperCase().contains(queryString)) {
+
+                        Song song = dataSnapshot1.getValue(Song.class);
+
+                        songsArrayList.add(song);
+                        songAdapter.notifyDataSetChanged();
+                    }
+
+
+
+                    //songsDatabaseReference.removeEventListener(songsChildEventListener);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        songsDatabaseReference.removeEventListener(songsChildEventListener);
+    }
+
+    private void changesTextSearchEditText() {
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.toString().trim().length()>0){
+
+                    searchSongs();
+                }else{
+                    searchEditText.clearFocus();
+                    loadSongs();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                searchEditText.setCursorVisible(false);
+            }
+        });
+
+
+
+        searchEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(40)});
     }
 
 

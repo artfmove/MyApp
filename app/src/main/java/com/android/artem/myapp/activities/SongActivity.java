@@ -133,7 +133,7 @@ public class SongActivity extends AppCompatActivity {
                 .load(urlImage) // image url
                 .placeholder(R.drawable.ic_music_note_black_24dp) // any placeholder to load at start
                 .error(R.drawable.ic_music_note_black_24dp)  // any image in case of error
-                 // resizing
+                // resizing
         .into(previewImageView);
 
         param = new PlaybackParams();

@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/colorBackground"
     tools:context=".activities.SongActivity">
 
 <LinearLayout
@@ -13,12 +14,15 @@
     android:layout_height="wrap_content">
 
     <ImageView
+        android:scaleType="center"
         android:id="@+id/previewImageView"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="match_parent"
+        android:maxWidth="200dp"
+        android:maxHeight="200dp"
         android:layout_gravity="center_horizontal"
         android:src="@drawable/ic_music_note_black_24dp"
-        tools:layout_editor_absoluteX="136dp" />
+        tools:layout_editor_absoluteX="136dp"/>
 
     <TextView
         android:id="@+id/titleTextView"
