@@ -27,4 +27,7 @@ public interface CacheDAO {
 
     @Query("select * from caches where cache_id ==:cacheId " )
     public Cache getCache(long cacheId);
+
+    @Query("select * from caches where network_url ==:url ")
+    public Cache getDownloadCache(String url);
 }

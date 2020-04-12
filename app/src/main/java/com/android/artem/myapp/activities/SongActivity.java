@@ -183,18 +183,22 @@ public class SongActivity extends AppCompatActivity {
         playerView.setPlayer(player);
         Uri uri;
 
-        /*if(cacheAppData.getCacheDAO().getAllCaches().contains(urlSong)){
-            uri = Uri.parse(uri2);
+       Cache currentCache = new Cache();
+
+
+        if(cacheAppData.getCacheDAO().getDownloadCache(urlSong)!=null && cacheAppData.getCacheDAO().getDownloadCache(urlSong).getNetUrl().equals(urlSong)){
+
+            uri = Uri.parse(cacheAppData.getCacheDAO().getDownloadCache(urlSong).getUrl());
         }else{
             //uri = Uri.parse(urlSong);
             uri = Uri.parse("https://files.freemusicarchive.org/storage-freemusicarchive-org/music/KEXP/Summer_Babes/KEXP_Live_Feb_2011/Summer_Babes_-_15_-_Home_Alone_II_Live__KEXP.mp3");
 
-        }*/
+        }
 
-        uri = Uri.parse(cacheAppData.getCacheDAO().getAllCaches().getUrl().toString());
+        //uri = Uri.parse(cacheAppData.getCacheDAO().getAllCaches().getUrl().toString());
 
 
-        //
+
         //Uri uri = Uri.parse("file:/data/user/0/com.android.artem.myapp/cache/song1664556465848270998mp3");
 
         MediaSource mediaSource = buildMediaSource(uri);
