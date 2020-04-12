@@ -18,14 +18,18 @@ public class Cache {
     @ColumnInfo(name = "cache_url")
     private String url;
 
+    @ColumnInfo(name = "network_url")
+    private String netUrl;
+
     @Ignore
     public Cache(){
 
     }
 
-    public Cache(long id, String url) {
+    public Cache(long id, String url, String netUrl) {
         this.id = id;
         this.url = url;
+        this.netUrl = netUrl;
     }
 
     public long getId() {
@@ -42,6 +46,14 @@ public class Cache {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getNetUrl() {
+        return netUrl;
+    }
+
+    public void setNetUrl(String netUrl) {
+        this.netUrl = netUrl;
     }
 }
 

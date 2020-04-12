@@ -178,17 +178,23 @@ public class SongActivity extends AppCompatActivity {
         songsDatabaseReference = database.getReference().child("SongsFav").child(user.getUid());
     }
 
-    private void initializePlayer() {
+    private void initializePlayer(String uri2) {
         player = ExoPlayerFactory.newSimpleInstance(this);
         playerView.setPlayer(player);
-
-
         Uri uri;
 
+        /*if(cacheAppData.getCacheDAO().getAllCaches().contains(urlSong)){
+            uri = Uri.parse(uri2);
+        }else{
+            //uri = Uri.parse(urlSong);
+            uri = Uri.parse("https://files.freemusicarchive.org/storage-freemusicarchive-org/music/KEXP/Summer_Babes/KEXP_Live_Feb_2011/Summer_Babes_-_15_-_Home_Alone_II_Live__KEXP.mp3");
+
+        }*/
+
+        uri = Uri.parse(cacheAppData.getCacheDAO().getAllCaches().getUrl().toString());
 
 
-        uri = Uri.parse("https://files.freemusicarchive.org/storage-freemusicarchive-org/music/KEXP/Summer_Babes/KEXP_Live_Feb_2011/Summer_Babes_-_15_-_Home_Alone_II_Live__KEXP.mp3");
-
+        //
         //Uri uri = Uri.parse("file:/data/user/0/com.android.artem.myapp/cache/song1664556465848270998mp3");
 
         MediaSource mediaSource = buildMediaSource(uri);
@@ -202,7 +208,7 @@ public class SongActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         if (Util.SDK_INT >= 24) {
-            initializePlayer();
+            initializePlayer(null);
         }
     }
 
@@ -211,7 +217,7 @@ public class SongActivity extends AppCompatActivity {
         super.onResume();
         //hideSystemUi();
         if ((Util.SDK_INT < 24 || player == null)) {
-            initializePlayer();
+            initializePlayer(null);
         }
     }
 
@@ -401,20 +407,24 @@ public class SongActivity extends AppCompatActivity {
         });*/
 
 
-        islandRef = storageRef.child("song/song1.mp3");
+        islandRef = storage.getReferenceFromUrl(urlSong);
+    //islandRef = storageRef.child("song/song1.mp3");
 
         final File localFile = File.createTempFile("song", "mp3");
 
         islandRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                URI url2  = localFile.toURI();
-                long id = cacheAppData.getCacheDAO().addCache(new Cache(0, localFile.toString()));
+                //URI url2  = localFile.toURI();
+                long id = cacheAppData.getCacheDAO().addCache(new Cache(0, localFile.toString(), urlSong));
 
                 Cache cache =cacheAppData.getCacheDAO().getCache(id);
 
 
-                Log.e("uri", ""+ cache.getId());
+                Log.e("uri", ""+ cache.getId() + cache.getUrl() + " "+ cache.getNetUrl());
+                releasePlayer();
+                initializePlayer(cache.getUrl().toString());
+
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
