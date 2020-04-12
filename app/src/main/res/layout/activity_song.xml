@@ -43,6 +43,12 @@
         android:text="Group"
         android:textSize="30sp"
         android:textStyle="italic" />
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        android:onClick="downloadSong"/>
 
 </LinearLayout>
 
@@ -99,6 +105,8 @@
             app:controller_layout_id="@layout/custom_playback_control"
             app:hide_on_touch="false"
             app:show_timeout="0" />
+
+
 
 
     </LinearLayout>

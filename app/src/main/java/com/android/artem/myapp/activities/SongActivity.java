@@ -2,6 +2,8 @@ package com.android.artem.myapp.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -12,12 +14,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.android.artem.myapp.data.CacheAppData;
+import com.android.artem.myapp.model.Cache;
 import com.android.artem.myapp.util.Act;
 import com.android.artem.myapp.R;
 import com.android.artem.myapp.model.Song;
@@ -30,7 +35,10 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -38,6 +46,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
 
 
 public class SongActivity extends AppCompatActivity {
@@ -46,16 +61,22 @@ public class SongActivity extends AppCompatActivity {
     private TextView titleTextView, groupTextView, speedTextView;
     private ImageView previewImageView;
     private SeekBar speedSeekbar;
+    private Button button;
 
 
     private DatabaseReference songsDatabaseReference;
     private FirebaseAuth auth;
+    private FirebaseStorage storage;
     private FirebaseDatabase database;
+    private StorageReference storageRef;
+    private StorageReference islandRef;
+    private StorageReference httpsReference;
     private ValueEventListener listener;
     private ValueEventListener deleteListener;
 
 
-    private String urlSong, urlImage, title, group;
+    private String urlImage, title, group;
+    public static String urlSong;
 
     private boolean isAdded = true;
 
@@ -70,16 +91,29 @@ public class SongActivity extends AppCompatActivity {
 
 
     private PlaybackParams param;
+    private CacheAppData cacheAppData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_song);
+
+
+        cacheAppData = Room.databaseBuilder(getApplicationContext(), CacheAppData.class, "AllCacheDB")
+                .allowMainThreadQueries()
+                .build();
+
+
+        Log.d("uriii", urlSong+"");
         speedSeekbar = findViewById(R.id.speedSeekBar);
         speedTextView = findViewById(R.id.speedTextView);
         titleTextView = findViewById(R.id.titleTextView);
         groupTextView = findViewById(R.id.groupTextView);
         previewImageView = findViewById(R.id.previewImageView);
+        button = findViewById(R.id.button);
+
+        storage = FirebaseStorage.getInstance();
+
 
 
         speedSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -127,7 +161,8 @@ public class SongActivity extends AppCompatActivity {
         urlImage = intent.getStringExtra("image");
         urlSong = intent.getStringExtra("id");
 
-
+        storageRef = storage.getReference();
+        httpsReference = storage.getReferenceFromUrl(urlSong);
 
         Glide.with(this)
                 .load(urlImage) // image url
@@ -146,8 +181,15 @@ public class SongActivity extends AppCompatActivity {
     private void initializePlayer() {
         player = ExoPlayerFactory.newSimpleInstance(this);
         playerView.setPlayer(player);
-        Uri uri = Uri.parse(urlSong);
-        //Uri uri = Uri.parse("https://files.freemusicarchive.org/storage-freemusicarchive-org/music/KEXP/Summer_Babes/KEXP_Live_Feb_2011/Summer_Babes_-_15_-_Home_Alone_II_Live__KEXP.mp3");
+
+
+        Uri uri;
+
+
+
+        uri = Uri.parse("https://files.freemusicarchive.org/storage-freemusicarchive-org/music/KEXP/Summer_Babes/KEXP_Live_Feb_2011/Summer_Babes_-_15_-_Home_Alone_II_Live__KEXP.mp3");
+
+        //Uri uri = Uri.parse("file:/data/user/0/com.android.artem.myapp/cache/song1664556465848270998mp3");
 
         MediaSource mediaSource = buildMediaSource(uri);
 
@@ -340,4 +382,49 @@ public class SongActivity extends AppCompatActivity {
     }
 
 
+    public void downloadSong(View view) throws IOException {
+        /*storageRef.child("song/Vremya_i_Steklo_-_Pesnya_pro_litso.mp3").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+
+                urlSong = uri.toString();
+                releasePlayer();
+                initializePlayer();
+                Toast.makeText(SongActivity.this, urlSong, Toast.LENGTH_SHORT).show();
+                Log.d("uriii", urlSong+"");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(SongActivity.this, "Fail", Toast.LENGTH_SHORT).show();
+            }
+        });*/
+
+
+        islandRef = storageRef.child("song/song1.mp3");
+
+        final File localFile = File.createTempFile("song", "mp3");
+
+        islandRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                URI url2  = localFile.toURI();
+                long id = cacheAppData.getCacheDAO().addCache(new Cache(0, localFile.toString()));
+
+                Cache cache =cacheAppData.getCacheDAO().getCache(id);
+
+
+                Log.e("uri", ""+ cache.getId());
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(SongActivity.this, "uri", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
+
+    }
 }
