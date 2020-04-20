@@ -6,17 +6,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.artem.myapp.adapter.CacheSongAdapter;
+import com.android.artem.myapp.data.CacheAppData;
+import com.android.artem.myapp.model.Cache;
 import com.android.artem.myapp.util.Act;
 import com.android.artem.myapp.R;
 import com.android.artem.myapp.model.Song;
@@ -40,13 +47,16 @@ public class FavouriteListActivity extends Fragment {
     private ChildEventListener songsChildEventListener;
 
     private List<Song> songsArrayList;
+    private List<Cache> cacheSongsArrayList;
     private RecyclerView songRecyclerView;
     private SongAdapter songAdapter;
+    private CacheSongAdapter cacheSongAdapter;
     private RecyclerView.LayoutManager songLayoutManager;
     private int columntCount;
 
     private EditText searchEditText;
 
+    private CacheAppData cacheAppData;
 
     @Nullable
     @Override
@@ -60,12 +70,46 @@ public class FavouriteListActivity extends Fragment {
 
         songsDatabaseReference = FirebaseDatabase.getInstance().getReference().child("SongsFav").child(user.getUid());
 
-        songsArrayList = new ArrayList<>();
         songRecyclerView = view.findViewById(R.id.recyclerView);
-        songAdapter = new SongAdapter(getContext(), songsArrayList);
-        songRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), columntCount));
-        songRecyclerView.setAdapter(songAdapter);
 
+        if(isNetworkAvailable(getContext())){
+            songsArrayList = new ArrayList<>();
+            songAdapter = new SongAdapter(getContext(), songsArrayList);
+            songRecyclerView.setAdapter(songAdapter);
+        }else{
+            cacheSongsArrayList = new ArrayList<>();
+            cacheSongAdapter = new CacheSongAdapter(getContext(), cacheSongsArrayList);
+            songRecyclerView.setAdapter(cacheSongAdapter);
+
+            cacheAppData = Room.databaseBuilder(getContext(), CacheAppData.class, "AllCacheDB")
+                    .allowMainThreadQueries()
+                    .build();
+
+            cacheSongsArrayList.addAll(cacheAppData.getCacheDAO().getAllCaches());
+            cacheSongAdapter.notifyDataSetChanged();
+        }
+
+
+
+
+
+
+        songRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), columntCount));
+
+
+
+        //cacheAppData.getCacheDAO().addCache(new Cache(100,"df","df","df","df"));
+        //Cache cache = cacheAppData.getCacheDAO().getCache(100);
+        //cacheSongsArrayList.add(cache);
+
+
+        /*for (int i=1; i<=cacheAppData.getCacheDAO().getAllCaches().size(); i++){
+
+            //Song song = new Song(cacheAppData.getCacheDAO().getAllCaches(), cacheAppData.getCacheDAO().getCache(i).getGroup(), Integer.toString(i), null);
+
+            Log.e("song", i+"");
+            songAdapter.notifyDataSetChanged();
+        }*/
         searchEditText = view.findViewById(R.id.searchEditText);
         changesTextSearchEditText();
 
@@ -73,7 +117,10 @@ public class FavouriteListActivity extends Fragment {
 
     }
 
-
+    public boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
+        return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
+    }
 
     /*@Override
     protected void onPostResume() {
@@ -84,6 +131,7 @@ public class FavouriteListActivity extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if(isNetworkAvailable(getContext()))
         loadSongs();
         Act.act=2;
     }

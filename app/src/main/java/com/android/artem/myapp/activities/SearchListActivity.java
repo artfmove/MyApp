@@ -7,11 +7,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.artem.myapp.util.Act;
@@ -61,6 +65,7 @@ public class SearchListActivity extends Fragment {
 
     private EditText searchEditText;
     private ImageButton searchImageButton;
+    private TextView networkCheck;
 
 
 
@@ -74,25 +79,39 @@ public class SearchListActivity extends Fragment {
 
 
 
-
+        songRecyclerView = view.findViewById(R.id.recyclerView);
         searchEditText = view.findViewById(R.id.searchEditText);
-        changesTextSearchEditText();
+        networkCheck = view.findViewById(R.id.networkCheck);
 
-        auth = FirebaseAuth.getInstance();
 
-        database = FirebaseDatabase.getInstance();
+        if(isNetworkAvailable(getContext())){
+            auth = FirebaseAuth.getInstance();
+            database = FirebaseDatabase.getInstance();
+            songsDatabaseReference = database.getReference().child("Songs");
+            songRecyclerView.setVisibility(View.VISIBLE);
+            networkCheck.setVisibility(View.GONE);
+            changesTextSearchEditText();
+            loadSongs();
+        }else{
+            songRecyclerView.setVisibility(View.GONE);
+            networkCheck.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+            networkCheck.setVisibility(View.VISIBLE);
+        }
+
+
+
         //storage = FirebaseStorage.getInstance();
 
 
         //usersDatabaseReference = database.getReference().child("users");
-        songsDatabaseReference = database.getReference().child("Songs");
+
 
         favouriteArrayList = new ArrayList<>();
         favouriteSongAdapter = new SongAdapter(getContext(), favouriteArrayList);
 
         songsArrayList = new ArrayList<>();
         songAdapter = new SongAdapter(getContext(), songsArrayList);
-        songRecyclerView = view.findViewById(R.id.recyclerView);
+
         songRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), columntCount));
         songRecyclerView.setAdapter(songAdapter);
 
@@ -106,7 +125,7 @@ public class SearchListActivity extends Fragment {
         //songsDatabaseReference.push().setValue(song);
 
        
-        loadSongs();
+
         /*Thread thread = new Thread(){
             @Override
             public void run(){
@@ -125,6 +144,10 @@ public class SearchListActivity extends Fragment {
 
     }
 
+    public boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
+        return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
+    }
 
 
     @Override

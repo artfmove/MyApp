@@ -21,15 +21,27 @@ public class Cache {
     @ColumnInfo(name = "network_url")
     private String netUrl;
 
+    @ColumnInfo(name = "group")
+    private String group;
+
+    @ColumnInfo(name = "title")
+    private String title;
+
+    @ColumnInfo(name = "imageUrl")
+    private String imageUrl;
+
     @Ignore
-    public Cache(){
+    public Cache() {
 
     }
 
-    public Cache(long id, String url, String netUrl) {
+    public Cache(long id, String url, String netUrl, String group, String title, String imageUrl) {
         this.id = id;
         this.url = url;
         this.netUrl = netUrl;
+        this.group = group;
+        this.title = title;
+        this.imageUrl = imageUrl;
     }
 
     public long getId() {
@@ -54,6 +66,30 @@ public class Cache {
 
     public void setNetUrl(String netUrl) {
         this.netUrl = netUrl;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
 

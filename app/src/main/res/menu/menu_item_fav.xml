@@ -2,8 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item android:id="@+id/download"
+        android:title="Download"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_cloud_download_black_24dp"/>
+    <item android:id="@+id/downloaded"
+        android:title="Delete from cache"/>
+
     <item
         android:id="@+id/deleteSong"
-        android:title="Delete Song"
+        android:title="Delete from favourites"
         app:showAsAction="never"/>
 </menu>

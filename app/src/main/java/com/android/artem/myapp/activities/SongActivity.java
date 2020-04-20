@@ -50,6 +50,8 @@ import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -77,6 +79,7 @@ public class SongActivity extends AppCompatActivity {
 
     private String urlImage, title, group;
     public static String urlSong;
+    private String urlCacheImage;
 
     private boolean isAdded = true;
 
@@ -112,7 +115,7 @@ public class SongActivity extends AppCompatActivity {
         previewImageView = findViewById(R.id.previewImageView);
         button = findViewById(R.id.button);
 
-        storage = FirebaseStorage.getInstance();
+
 
 
 
@@ -157,25 +160,34 @@ public class SongActivity extends AppCompatActivity {
         intent = getIntent();
         title = intent.getStringExtra("title");
         titleTextView.setText(title);
-        groupTextView.setText(intent.getStringExtra("group"));
+        group = intent.getStringExtra("group");
+        groupTextView.setText(group);
         urlImage = intent.getStringExtra("image");
         urlSong = intent.getStringExtra("id");
+        Log.e("uri", urlSong + " " + urlCacheImage);
 
-        storageRef = storage.getReference();
-        httpsReference = storage.getReferenceFromUrl(urlSong);
+        param = new PlaybackParams();
+
+        FavouriteListActivity fvl = new FavouriteListActivity();
+
+
+        if(fvl.isNetworkAvailable(getApplicationContext())){
+            storage = FirebaseStorage.getInstance();
+            storageRef = storage.getReference();
+            httpsReference = storage.getReferenceFromUrl(urlSong);
+            database = FirebaseDatabase.getInstance();
+            auth = FirebaseAuth.getInstance();
+            FirebaseUser user = auth.getCurrentUser();
+            songsDatabaseReference = database.getReference().child("SongsFav").child(user.getUid());
+        }
+
 
         Glide.with(this)
                 .load(urlImage) // image url
                 .placeholder(R.drawable.ic_music_note_black_24dp) // any placeholder to load at start
                 .error(R.drawable.ic_music_note_black_24dp)  // any image in case of error
                 // resizing
-        .into(previewImageView);
-
-        param = new PlaybackParams();
-        database = FirebaseDatabase.getInstance();
-        auth = FirebaseAuth.getInstance();
-        FirebaseUser user = auth.getCurrentUser();
-        songsDatabaseReference = database.getReference().child("SongsFav").child(user.getUid());
+                .into(previewImageView);
     }
 
     private void initializePlayer(String uri2) {
@@ -411,16 +423,41 @@ public class SongActivity extends AppCompatActivity {
         });*/
 
 
+        islandRef = storage.getReferenceFromUrl(urlImage);
+
+
+        final File localFileImage = File.createTempFile("image", "jpg");
+
+        islandRef.getFile(localFileImage).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                urlCacheImage = localFileImage.toString();
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+
+            }
+        });
+
+
+
+
+
+
+
         islandRef = storage.getReferenceFromUrl(urlSong);
     //islandRef = storageRef.child("song/song1.mp3");
 
         final File localFile = File.createTempFile("song", "mp3");
 
+
         islandRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                //URI url2  = localFile.toURI();
-                long id = cacheAppData.getCacheDAO().addCache(new Cache(0, localFile.toString(), urlSong));
+
+                long id = cacheAppData.getCacheDAO().addCache(new Cache(0, localFile.toString(), urlSong, group, title, urlCacheImage));
 
                 Cache cache =cacheAppData.getCacheDAO().getCache(id);
 
@@ -436,6 +473,14 @@ public class SongActivity extends AppCompatActivity {
                 Toast.makeText(SongActivity.this, "uri", Toast.LENGTH_SHORT).show();
             }
         });
+
+
+
+
+
+
+
+
 
 
 

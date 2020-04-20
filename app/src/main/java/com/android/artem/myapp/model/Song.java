@@ -17,6 +17,11 @@ public class Song {
         this.image = image;
     }
 
+    public Song(String title, String group) {
+        this.title = title;
+        this.group = group;
+    }
+
     public String getTitle() {
         return title;
     }
