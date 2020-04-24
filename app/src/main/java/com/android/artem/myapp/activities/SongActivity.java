@@ -2,6 +2,7 @@ package com.android.artem.myapp.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
@@ -63,7 +64,7 @@ public class SongActivity extends AppCompatActivity {
     private TextView titleTextView, groupTextView, speedTextView;
     private ImageView previewImageView;
     private SeekBar speedSeekbar;
-    private Button button;
+
 
 
     private DatabaseReference songsDatabaseReference;
@@ -91,7 +92,7 @@ public class SongActivity extends AppCompatActivity {
     private SimpleExoPlayer player;
 
     private Intent intent;
-
+    private Menu menu;
 
     private PlaybackParams param;
     private CacheAppData cacheAppData;
@@ -113,7 +114,7 @@ public class SongActivity extends AppCompatActivity {
         titleTextView = findViewById(R.id.titleTextView);
         groupTextView = findViewById(R.id.groupTextView);
         previewImageView = findViewById(R.id.previewImageView);
-        button = findViewById(R.id.button);
+
 
 
 
@@ -190,6 +191,14 @@ public class SongActivity extends AppCompatActivity {
                 .into(previewImageView);
     }
 
+    private boolean isCached(){
+        boolean isTrue = false;
+        if(cacheAppData.getCacheDAO().getDownloadCache(urlSong)!=null && cacheAppData.getCacheDAO().getDownloadCache(urlSong).getNetUrl().equals(urlSong)){
+           isTrue = true;
+        }
+        return isTrue;
+    }
+
     private void initializePlayer(String uri2) {
         player = ExoPlayerFactory.newSimpleInstance(this);
         playerView.setPlayer(player);
@@ -198,7 +207,7 @@ public class SongActivity extends AppCompatActivity {
        Cache currentCache = new Cache();
 
 
-        if(cacheAppData.getCacheDAO().getDownloadCache(urlSong)!=null && cacheAppData.getCacheDAO().getDownloadCache(urlSong).getNetUrl().equals(urlSong)){
+        if(isCached()){
 
             uri = Uri.parse(cacheAppData.getCacheDAO().getDownloadCache(urlSong).getUrl());
         }else{
@@ -285,11 +294,16 @@ public class SongActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
+        this.menu = menu;
         MenuInflater inflater = getMenuInflater();
         if (Act.act == 1) {
             inflater.inflate(R.menu.menu_item, menu);
         } else if (Act.act == 2) {
             inflater.inflate(R.menu.menu_item_fav, menu);
+        }
+
+        if (isCached()==true){
+            menu.getItem(1).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_cloud_download_black_24dp));
         }
         return true;
     }
@@ -355,12 +369,21 @@ public class SongActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
+
+
         switch (item.getItemId()) {
             case R.id.addSong:
                 listener();
                 return true;
             case R.id.deleteSong:
                 deleteSong();
+            case R.id.download:
+                try {
+                    downloadSong();
+                    menu.getItem(1).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_cloud_download_black_24dp));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -404,7 +427,7 @@ public class SongActivity extends AppCompatActivity {
     }
 
 
-    public void downloadSong(View view) throws IOException {
+    public void downloadSong() throws IOException {
         /*storageRef.child("song/Vremya_i_Steklo_-_Pesnya_pro_litso.mp3").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {

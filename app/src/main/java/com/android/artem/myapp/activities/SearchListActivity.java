@@ -118,10 +118,10 @@ public class SearchListActivity extends Fragment {
 
 
         Song song = new Song();
-        song.setTitle("Let It Be");
-        song.setId("https://firebasestorage.googleapis.com/v0/b/myapp-72b61.appspot.com/o/song%2Fmaroon_5_-_this_love_pesni_na_den_svjatogo_valentina_(zf.fm).mp3?alt=media&token=3cd53128-0abb-4d13-a259-8e747fb4c3a5");
-        song.setGroup("Maroon 5");
-        song.setImage("https://firebasestorage.googleapis.com/v0/b/myapp-72b61.appspot.com/o/image%2Fmaroon5.jpg?alt=media&token=cb23f06c-371a-43ef-928c-f75fcd581bd0");
+        song.setTitle("The Seven Nation Army");
+        song.setId("https://firebasestorage.googleapis.com/v0/b/myapp-72b61.appspot.com/o/song%2FWhite%20Stripes%2C%20The%20-%20Seven%20Nation%20Army%20(minus).mp3?alt=media&token=dbdfa4d7-03b1-449a-83be-c71ed602364f");
+        song.setGroup("White Stripes");
+        song.setImage("https://firebasestorage.googleapis.com/v0/b/myapp-72b61.appspot.com/o/image%2Fwhite-stripes.jpg?alt=media&token=ab319f1a-18c6-4b54-a51c-fd518cb56c55");
         //songsDatabaseReference.push().setValue(song);
 
        
