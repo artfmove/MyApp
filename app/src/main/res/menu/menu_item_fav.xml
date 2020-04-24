@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
-    <item android:id="@+id/downloaded"
+    <item android:id="@+id/deleteFromCache"
         android:title="Delete from cache"/>
     <item android:id="@+id/download"
         android:title="Download"
@@ -11,7 +11,7 @@
         android:icon="@drawable/ic_cloud_download_white_24dp"/>
 
     <item
-        android:id="@+id/deleteSong"
+        android:id="@+id/deleteFromFav"
         android:title="Delete from favourites"
         app:showAsAction="never"/>
 </menu>

@@ -7,8 +7,10 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.media.PlaybackParams;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -165,7 +167,7 @@ public class SongActivity extends AppCompatActivity {
         groupTextView.setText(group);
         urlImage = intent.getStringExtra("image");
         urlSong = intent.getStringExtra("id");
-        Log.e("uri", urlSong + " " + urlCacheImage);
+        //Log.e("uri", urlSong + " " + urlCacheImage);
 
         param = new PlaybackParams();
 
@@ -202,7 +204,7 @@ public class SongActivity extends AppCompatActivity {
     private void initializePlayer(String uri2) {
         player = ExoPlayerFactory.newSimpleInstance(this);
         playerView.setPlayer(player);
-        Uri uri;
+        Uri uri = null;
 
        Cache currentCache = new Cache();
 
@@ -211,8 +213,8 @@ public class SongActivity extends AppCompatActivity {
 
             uri = Uri.parse(cacheAppData.getCacheDAO().getDownloadCache(urlSong).getUrl());
         }else{
-            //uri = Uri.parse(urlSong);
-            uri = Uri.parse("https://files.freemusicarchive.org/storage-freemusicarchive-org/music/KEXP/Summer_Babes/KEXP_Live_Feb_2011/Summer_Babes_-_15_-_Home_Alone_II_Live__KEXP.mp3");
+            uri = Uri.parse(String.valueOf(R.raw.song));
+            //uri = Uri.parse("https://files.freemusicarchive.org/storage-freemusicarchive-org/music/KEXP/Summer_Babes/KEXP_Live_Feb_2011/Summer_Babes_-_15_-_Home_Alone_II_Live__KEXP.mp3");
 
         }
 
@@ -310,6 +312,11 @@ public class SongActivity extends AppCompatActivity {
 
 
     public void listener() {
+
+        if(!isNetworkAvailable(getApplicationContext())){
+            Toast.makeText(this, "It's impossible to add offline", Toast.LENGTH_SHORT).show();
+            return;
+        }
         listener = (new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -323,6 +330,7 @@ public class SongActivity extends AppCompatActivity {
                     songsDatabaseReference.push().setValue(song);
                     Toast.makeText(SongActivity.this, "Song - " + title + " is added", Toast.LENGTH_LONG).show();
                     songsDatabaseReference.removeEventListener(listener);
+
                 } else {
 
 
@@ -375,23 +383,38 @@ public class SongActivity extends AppCompatActivity {
             case R.id.addSong:
                 listener();
                 return true;
-            case R.id.deleteSong:
+            case R.id.deleteFromFav:
                 deleteSong();
+                return true;
             case R.id.download:
                 try {
                     downloadSong();
-                    menu.getItem(1).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_cloud_download_black_24dp));
-                } catch (IOException e) {
+                    } catch (IOException e) {
                     e.printStackTrace();
                 }
-
+                return true;
+            case R.id.deleteFromCache:
+                deleteFromCache();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
     }
 
+    private void deleteFromCache(){
+        Cache cache = cacheAppData.getCacheDAO().getDownloadCache(urlSong);
+        cacheAppData.getCacheDAO().deleteCache(cache);
+        menu.getItem(1).setIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_cloud_download_white_24dp));
+
+
+    }
+
     private void deleteSong() {
+        if(!isNetworkAvailable(getApplicationContext())){
+            Toast.makeText(this, "It's impossible to delete offline", Toast.LENGTH_SHORT).show();
+            return;
+        }
         deleteListener = (new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -402,6 +425,11 @@ public class SongActivity extends AppCompatActivity {
                         dataSnapshot1.getRef().removeValue();
                         Toast.makeText(SongActivity.this, "Delete", Toast.LENGTH_SHORT).show();
                         songsDatabaseReference.removeEventListener(deleteListener);
+
+
+
+                        Cache cache = cacheAppData.getCacheDAO().getDownloadCache(urlSong);
+                        cacheAppData.getCacheDAO().deleteCache(cache);
                         finish();
                         break;
                     } else {
@@ -445,6 +473,10 @@ public class SongActivity extends AppCompatActivity {
             }
         });*/
 
+        if(isCached()){
+            Toast.makeText(this, "Song is already cached", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         islandRef = storage.getReferenceFromUrl(urlImage);
 
@@ -489,6 +521,14 @@ public class SongActivity extends AppCompatActivity {
                 releasePlayer();
                 initializePlayer(cache.getUrl().toString());
 
+                menu.getItem(1).setIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_cloud_download_black_24dp));
+                Toast.makeText(SongActivity.this, "Your song is downloading", Toast.LENGTH_LONG).show();
+
+
+               listener();
+
+
+
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -508,5 +548,9 @@ public class SongActivity extends AppCompatActivity {
 
 
 
+    }
+    public boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
+        return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
     }
 }
