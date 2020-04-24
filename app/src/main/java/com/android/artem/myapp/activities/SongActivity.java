@@ -17,6 +17,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -118,7 +120,7 @@ public class SongActivity extends AppCompatActivity {
         previewImageView = findViewById(R.id.previewImageView);
 
 
-
+        titleTextView.startAnimation((Animation) AnimationUtils.loadAnimation(getApplicationContext(),R.anim.translate));
 
 
 

@@ -19,6 +19,7 @@
     android:layout_height="100dp"
     android:layout_gravity="bottom"
     android:layoutDirection="ltr"
+    android:layout_marginBottom="10dp"
     android:orientation="vertical"
     tools:targetApi="28">
 
@@ -29,23 +30,36 @@
         android:paddingTop="4dp"
         android:orientation="horizontal">
 
-
+        <ImageButton
+            android:src="@drawable/ic_cloud_download_white_24dp"
+            android:scaleType="centerInside"
+            android:backgroundTint="@android:color/transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="40dp"/>
 
         <ImageButton android:id="@id/exo_play"
-            android:background="@drawable/ic_play_arrow_black_24dp"
+            android:src="@drawable/ic_play_arrow_black_48dp"
             android:scaleType="centerInside"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
             android:backgroundTint="@android:color/transparent"
-            style="@style/ExoMediaButton.Play"/>
+            style="@style/ExoMediaButton.Play"
+            android:layout_gravity="center"/>
+
 
         <ImageButton android:id="@id/exo_pause"
-            android:background="@drawable/ic_pause_black_24dp"
+            android:src="@drawable/ic_pause_black_48dp"
             android:backgroundTint="@android:color/transparent"
             android:scaleType="centerInside"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            style="@style/ExoMediaButton.Pause"/>
+            style="@style/ExoMediaButton.Pause"
+            android:layout_gravity="center"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_more_vert_white_24dp"
+            android:scaleType="centerInside"
+            android:backgroundTint="@android:color/transparent"
+            android:paddingLeft="40dp"/>
 
 
 

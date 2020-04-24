@@ -59,8 +59,13 @@ public class SplashScreenActivity extends AppCompatActivity {
                 }
             }
         };
-        thread.start();
-        //startActivity(new Intent(SplashScreenActivity.this, MainActivity.class));
+       // thread.start();
+        auth = FirebaseAuth.getInstance();
+        if(auth.getCurrentUser() !=null){
+            startActivity(new Intent(SplashScreenActivity.this, MainActivity.class));
+        }else{
+            startActivity(new Intent(SplashScreenActivity.this, SignInActivity.class));
+        }
     }
 
     @Override
