@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:key="me"
+        app:title="Me">
+        <Preference app:key="name"
+            app:title="Name"
+            app:summary="None"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="notifications_category"
+        app:title="Notifications">
+
+        <SwitchPreferenceCompat
+            app:key="notifications"
+            app:title="Enable message notifications"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="cache"
+        app:title="Cache">
+        <Preference app:title="Delete cache"
+            app:key="backtracks"/>
+        <Preference app:title="Delete all backtracks?"
+            app:key="backtracks1"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="help_category"
+        app:title="Help">
+
+        <Preference
+            app:key="feedback"
+            app:summary="Report technical issues or suggest new features"
+            app:title="Send feedback"
+            />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="about"
+        app:title="About">
+        <Preference app:key="developer"
+            app:title="Developer"
+            app:summary="Artfmove"/>
+        <Preference app:key="version"
+            app:title="Version"
+            app:summary="@string/versionName"/>
+    </PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

@@ -13,9 +13,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.artem.myapp.R;
+import com.android.artem.myapp.util.Act;
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -36,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         selectedFragment = new SearchListActivity();
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
@@ -51,14 +55,16 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.search_song:
                             currentItemId=R.id.search_song;
                             selectedFragment = new SearchListActivity();
+
                             break;
                         case R.id.fav_list:
                             currentItemId=R.id.fav_list;
                             selectedFragment = new FavouriteListActivity();
+
                             break;
                         case R.id.settings:
                             currentItemId=R.id.settings;
-                            selectedFragment = new Settings();
+                            selectedFragment = new SettingsFragment();
                             break;
                     }
 
@@ -75,27 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             };
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return true;
-    }
 
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.signOut:
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(MainActivity.this, SignInActivity.class));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-
-    }
 
 
 }

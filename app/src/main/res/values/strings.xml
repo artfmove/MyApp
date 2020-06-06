@@ -1,3 +1,16 @@
 <resources>
-    <string name="app_name">MyApp</string>
+    <string name="app_name">U.B.T.</string>
+
+
+
+    <string-array name="functions">
+    <item>Add to my list</item>
+    <item>Delete from favourites</item>
+    <item>Delete from cache</item>
+    </string-array>
+
+    <string-array name="functionsFav">
+        <item>Delete from favourites</item>
+        <item>Delete from cache</item>
+    </string-array>
 </resources>

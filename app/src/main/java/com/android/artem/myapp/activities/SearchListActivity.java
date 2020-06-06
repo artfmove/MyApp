@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,6 +22,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -42,7 +45,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchListActivity extends Fragment {
+public class SearchListActivity extends Fragment{
 
     private DatabaseReference songsDatabaseReference;
     private DatabaseReference usersDatabaseReference;
@@ -67,6 +70,8 @@ public class SearchListActivity extends Fragment {
     private ImageButton searchImageButton;
     private TextView networkCheck;
 
+    private Context context;
+
 
 
 
@@ -76,12 +81,14 @@ public class SearchListActivity extends Fragment {
         View view = inflater.inflate(R.layout.activity_search_list, container, false);
 
         columntCount = getResources().getInteger(R.integer.column_count);
-
+        context = getContext();
 
 
         songRecyclerView = view.findViewById(R.id.recyclerView);
         searchEditText = view.findViewById(R.id.searchEditText);
         networkCheck = view.findViewById(R.id.networkCheck);
+        searchEditText.setVisibility(View.GONE);
+
 
 
         if(isNetworkAvailable(getContext())){
@@ -156,16 +163,19 @@ public class SearchListActivity extends Fragment {
         Act.act=1;
     }
 
+
+
     private void searchSongs() {
 
         final String queryString = searchEditText.getText().toString().trim().toUpperCase();
         favouriteArrayList.clear();
+
         songsDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){
-                    if(dataSnapshot1.child("title").getValue().toString().toUpperCase().contains(queryString)) {
+                    if(dataSnapshot1.child("title").getValue().toString().toUpperCase().trim().contains(queryString)) {
 
                         Song song = dataSnapshot1.getValue(Song.class);
 
@@ -173,6 +183,7 @@ public class SearchListActivity extends Fragment {
                         favouriteArrayList.add(song);
                         songRecyclerView.setAdapter(favouriteSongAdapter);
                         favouriteSongAdapter.notifyDataSetChanged();
+
                     }
 
 
@@ -262,6 +273,58 @@ public class SearchListActivity extends Fragment {
 
 
 
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+
+
+        super.onCreate(savedInstanceState);
+
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id==R.id.search_bar){
+            if(Act.isSearchOn){
+                searchEditText.setVisibility(View.GONE);
+                searchEditText.clearFocus();
+                InputMethodManager imm = (InputMethodManager) context.getSystemService(
+                        Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
+                Act.isSearchOn=false;
+            }else {
+
+
+                searchEditText.setVisibility(View.VISIBLE);
+                searchEditText.setFocusableInTouchMode(true);
+                searchEditText.requestFocus();
+                InputMethodManager imm = (InputMethodManager) context.getSystemService(getContext().INPUT_METHOD_SERVICE);
+                imm.showSoftInput(searchEditText, InputMethodManager.RESULT_UNCHANGED_HIDDEN);
+                Act.isSearchOn=true;
+            }
+        }
+        if(id==R.id.signOut){
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(getContext(), SignInActivity.class));
+        }
+        if(id==R.id.settings){
+
+            startActivity(new Intent(getContext(), SignInActivity.class));
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
 
 

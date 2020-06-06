@@ -30,4 +30,5 @@ public interface CacheDAO {
 
     @Query("select * from caches where network_url ==:url ")
     public Cache getDownloadCache(String url);
+
 }

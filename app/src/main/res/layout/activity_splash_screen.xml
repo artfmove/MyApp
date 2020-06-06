@@ -18,27 +18,27 @@
         android:id="@+id/logo2"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:background="@color/colorMain1"
+        android:layout_gravity="bottom"
+        android:background="@color/colorPrimary1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.299"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.367"
-        android:layout_gravity="bottom"/>
+        app:layout_constraintVertical_bias="0.367" />
 
     <ImageView
         android:id="@+id/logo1"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:background="@color/colorMain2"
+        android:layout_gravity="bottom"
+        android:background="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.7"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.367"
-        android:layout_gravity="bottom"/>
+        app:layout_constraintVertical_bias="0.367" />
 </LinearLayout>
 
     <LinearLayout
@@ -51,7 +51,7 @@
             android:id="@+id/logo4"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:background="@color/colorMain4"
+            android:background="@color/colorPrimaryDark"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.7"
@@ -60,16 +60,16 @@
             app:layout_constraintVertical_bias="0.567" />
 
         <ImageView
-        android:id="@+id/logo3"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-            android:background="@color/colorMain3"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.299"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.567" />
+            android:id="@+id/logo3"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@color/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.299"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.567" />
 </LinearLayout>
 
 </LinearLayout>

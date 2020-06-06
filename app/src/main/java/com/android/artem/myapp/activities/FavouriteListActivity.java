@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.text.Editable;
@@ -16,8 +17,13 @@ import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -37,6 +43,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +54,7 @@ public class FavouriteListActivity extends Fragment {
     private ChildEventListener songsChildEventListener;
 
     private List<Song> songsArrayList;
-    private List<Cache> cacheSongsArrayList;
+    private List<Cache> cacheSongsArrayList, cacheSongsArrayList2;
     private RecyclerView songRecyclerView;
     private SongAdapter songAdapter;
     private CacheSongAdapter cacheSongAdapter;
@@ -56,7 +63,10 @@ public class FavouriteListActivity extends Fragment {
 
     private EditText searchEditText;
 
+    private String titleCache="y";
     private CacheAppData cacheAppData;
+
+    private Context context;
 
     @Nullable
     @Override
@@ -68,6 +78,8 @@ public class FavouriteListActivity extends Fragment {
         FirebaseUser user = auth.getCurrentUser();
         columntCount = getResources().getInteger(R.integer.column_count);
 
+        context = getContext();
+
         songsDatabaseReference = FirebaseDatabase.getInstance().getReference().child("SongsFav").child(user.getUid());
 
         songRecyclerView = view.findViewById(R.id.recyclerView);
@@ -78,6 +90,7 @@ public class FavouriteListActivity extends Fragment {
             songRecyclerView.setAdapter(songAdapter);
         }else{
             cacheSongsArrayList = new ArrayList<>();
+            cacheSongsArrayList2 = new ArrayList<>();
             cacheSongAdapter = new CacheSongAdapter(getContext(), cacheSongsArrayList);
             songRecyclerView.setAdapter(cacheSongAdapter);
 
@@ -86,6 +99,7 @@ public class FavouriteListActivity extends Fragment {
                     .build();
 
             cacheSongsArrayList.addAll(cacheAppData.getCacheDAO().getAllCaches());
+            cacheSongsArrayList2.addAll(cacheSongsArrayList);
             cacheSongAdapter.notifyDataSetChanged();
         }
 
@@ -111,6 +125,7 @@ public class FavouriteListActivity extends Fragment {
             songAdapter.notifyDataSetChanged();
         }*/
         searchEditText = view.findViewById(R.id.searchEditText);
+        searchEditText.setVisibility(View.GONE);
         changesTextSearchEditText();
 
         return view;
@@ -177,13 +192,26 @@ public class FavouriteListActivity extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.toString().trim().length()>0){
-
-                    searchSongs();
+                if(isNetworkAvailable(getContext())){
+                    if(s.toString().trim().length()>0){
+                        searchSongs();
+                    }else{
+                        searchEditText.clearFocus();
+                        loadSongs();
+                    }
                 }else{
-                    searchEditText.clearFocus();
-                    loadSongs();
+                    if(s.toString().trim().length()>0){
+                        searchCacheSongs();
+                    }else{
+                        searchEditText.clearFocus();
+                        cacheSongsArrayList.clear();
+                        cacheSongsArrayList.addAll(cacheAppData.getCacheDAO().getAllCaches());
+                        cacheSongAdapter.notifyDataSetChanged();
+                    }
                 }
+
+
+
             }
 
             @Override
@@ -195,6 +223,30 @@ public class FavouriteListActivity extends Fragment {
 
 
         searchEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(40)});
+    }
+
+    private void searchCacheSongs(){
+
+        final String queryString = searchEditText.getText().toString().trim().toUpperCase();
+        cacheSongAdapter.notifyDataSetChanged();
+
+
+        cacheSongsArrayList.clear();
+        Cache cache1, cache2;
+
+        //cacheSongsArrayList.addAll(cacheAppData.getCacheDAO().getAllCaches());
+        for(int i=0; i<cacheSongsArrayList2.size(); i++){
+
+            cache1 = cacheSongsArrayList2.get(i);
+
+            if (cache1.getTitle().toUpperCase().contains(queryString) && !titleCache.contains(cache1.getTitle().toUpperCase())){
+                cacheSongsArrayList.add(cache1);
+
+            }
+            titleCache = cache1.getTitle().toUpperCase();
+        }
+        cacheSongAdapter.notifyDataSetChanged();
+
     }
 
 
@@ -237,5 +289,51 @@ public class FavouriteListActivity extends Fragment {
             }
         };
         songsDatabaseReference.addChildEventListener(songsChildEventListener);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+
+
+        super.onCreate(savedInstanceState);
+
+    }
+
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id==R.id.search_bar){
+            if(Act.isSearchOn){
+                searchEditText.setVisibility(View.GONE);
+                searchEditText.clearFocus();
+                InputMethodManager imm = (InputMethodManager) context.getSystemService(
+                        Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
+                Act.isSearchOn=false;
+            }else {
+
+
+                searchEditText.setVisibility(View.VISIBLE);
+                searchEditText.setFocusableInTouchMode(true);
+                searchEditText.requestFocus();
+                InputMethodManager imm = (InputMethodManager) context.getSystemService(getContext().INPUT_METHOD_SERVICE);
+                imm.showSoftInput(searchEditText, InputMethodManager.RESULT_UNCHANGED_HIDDEN);
+                Act.isSearchOn=true;
+            }
+        }
+        if(id==R.id.signOut){
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(getContext(), SignInActivity.class));
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
