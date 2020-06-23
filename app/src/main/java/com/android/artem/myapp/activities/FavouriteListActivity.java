@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.android.artem.myapp.adapter.CacheSongAdapter;
 import com.android.artem.myapp.data.CacheAppData;
+import com.android.artem.myapp.isNetwork;
 import com.android.artem.myapp.model.Cache;
 import com.android.artem.myapp.util.Act;
 import com.android.artem.myapp.R;
@@ -55,11 +56,10 @@ public class FavouriteListActivity extends Fragment {
 
     private List<Song> songsArrayList;
     private List<Cache> cacheSongsArrayList, cacheSongsArrayList2;
-    private RecyclerView songRecyclerView;
+    public RecyclerView songRecyclerView;
     private SongAdapter songAdapter;
     private CacheSongAdapter cacheSongAdapter;
-    private RecyclerView.LayoutManager songLayoutManager;
-    private int columntCount;
+    private int columnCount;
 
     private EditText searchEditText;
 
@@ -72,19 +72,18 @@ public class FavouriteListActivity extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_favourite_list, container, false);
-
-
-        auth = FirebaseAuth.getInstance();
-        FirebaseUser user = auth.getCurrentUser();
-        columntCount = getResources().getInteger(R.integer.column_count);
+        Log.e("Create", "CreateView");
 
         context = getContext();
 
-        songsDatabaseReference = FirebaseDatabase.getInstance().getReference().child("SongsFav").child(user.getUid());
+
 
         songRecyclerView = view.findViewById(R.id.recyclerView);
 
-        if(isNetworkAvailable(getContext())){
+        if(isNetwork.isNetworkAvailable(getContext())){
+            auth = FirebaseAuth.getInstance();
+            FirebaseUser user = auth.getCurrentUser();
+            songsDatabaseReference = FirebaseDatabase.getInstance().getReference().child("SongsFav").child(user.getUid());
             songsArrayList = new ArrayList<>();
             songAdapter = new SongAdapter(getContext(), songsArrayList);
             songRecyclerView.setAdapter(songAdapter);
@@ -107,23 +106,12 @@ public class FavouriteListActivity extends Fragment {
 
 
 
-
-        songRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), columntCount));
-
-
-
-        //cacheAppData.getCacheDAO().addCache(new Cache(100,"df","df","df","df"));
-        //Cache cache = cacheAppData.getCacheDAO().getCache(100);
-        //cacheSongsArrayList.add(cache);
+        columnCount = getResources().getInteger(R.integer.column_count);
+        songRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), columnCount));
 
 
-        /*for (int i=1; i<=cacheAppData.getCacheDAO().getAllCaches().size(); i++){
 
-            //Song song = new Song(cacheAppData.getCacheDAO().getAllCaches(), cacheAppData.getCacheDAO().getCache(i).getGroup(), Integer.toString(i), null);
 
-            Log.e("song", i+"");
-            songAdapter.notifyDataSetChanged();
-        }*/
         searchEditText = view.findViewById(R.id.searchEditText);
         searchEditText.setVisibility(View.GONE);
         changesTextSearchEditText();
@@ -132,27 +120,18 @@ public class FavouriteListActivity extends Fragment {
 
     }
 
-    public boolean isNetworkAvailable(Context context) {
-        ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
-        return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
-    }
 
-    /*@Override
-    protected void onPostResume() {
-        super.onPostResume();
-        Act.act=2;
-    }*/
 
     @Override
     public void onResume() {
         super.onResume();
-        if(isNetworkAvailable(getContext()))
+        if(isNetwork.isNetworkAvailable(getContext()))
         loadSongs();
         Act.act=2;
+        Log.e("Create", "Resume");
     }
 
     private void searchSongs() {
-
         final String queryString = searchEditText.getText().toString().trim().toUpperCase();
         songsArrayList.clear();
         songsDatabaseReference.addValueEventListener(new ValueEventListener() {
@@ -192,7 +171,7 @@ public class FavouriteListActivity extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(isNetworkAvailable(getContext())){
+                if(isNetwork.isNetworkAvailable(getContext())){
                     if(s.toString().trim().length()>0){
                         searchSongs();
                     }else{
@@ -232,9 +211,8 @@ public class FavouriteListActivity extends Fragment {
 
 
         cacheSongsArrayList.clear();
-        Cache cache1, cache2;
+        Cache cache1;
 
-        //cacheSongsArrayList.addAll(cacheAppData.getCacheDAO().getAllCaches());
         for(int i=0; i<cacheSongsArrayList2.size(); i++){
 
             cache1 = cacheSongsArrayList2.get(i);
@@ -294,7 +272,7 @@ public class FavouriteListActivity extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-
+        Log.e("Create", "Create");
 
         super.onCreate(savedInstanceState);
 
@@ -333,6 +311,7 @@ public class FavouriteListActivity extends Fragment {
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(getContext(), SignInActivity.class));
         }
+
 
         return super.onOptionsItemSelected(item);
     }

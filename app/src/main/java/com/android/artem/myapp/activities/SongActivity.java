@@ -13,6 +13,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.media.PlaybackParams;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -41,10 +43,12 @@ import android.widget.Toast;
 
 
 import com.android.artem.myapp.data.CacheAppData;
+import com.android.artem.myapp.isNetwork;
 import com.android.artem.myapp.model.Cache;
 import com.android.artem.myapp.util.Act;
 import com.android.artem.myapp.R;
 import com.android.artem.myapp.model.Song;
+import com.android.artem.myapp.util.mColor;
 import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -69,11 +73,14 @@ import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
+import com.android.artem.myapp.isNetwork;
+import com.android.artem.myapp.util.Act;
 
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Random;
 
 
 public class SongActivity extends AppCompatActivity implements View.OnClickListener {
@@ -116,7 +123,9 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
 
     private PlaybackParams param;
     private CacheAppData cacheAppData;
-private AlertDialog alertDialog;
+    private AlertDialog alertDialog;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,12 +136,13 @@ private AlertDialog alertDialog;
         setContentView(R.layout.activity_song);
 
 
+
+
         cacheAppData = Room.databaseBuilder(getApplicationContext(), CacheAppData.class, "AllCacheDB")
                 .allowMainThreadQueries()
                 .build();
 
 
-        Log.d("uriii", urlSong + "");
         speedSeekbar = findViewById(R.id.speedSeekBar);
         speedTextView = findViewById(R.id.speedTextView);
         titleTextView = findViewById(R.id.titleTextView);
@@ -142,7 +152,7 @@ private AlertDialog alertDialog;
         downloadButton = findViewById(R.id.downloadButton);
         moreButton = findViewById(R.id.moreButton);
         progressBar = findViewById(R.id.progressBar);
-
+        playerView = findViewById(R.id.video_view);
 
         titleTextView.startAnimation((Animation) AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate));
 
@@ -180,47 +190,20 @@ private AlertDialog alertDialog;
 
         });
 
+        getIntentExtra();
+        ifNetworkIsNot();
 
-        playerView = findViewById(R.id.video_view);
 
-        intent = getIntent();
-        title = intent.getStringExtra("title");
-        titleTextView.setText(title);
-        group = intent.getStringExtra("group");
-        groupTextView.setText(group);
-        urlImage = intent.getStringExtra("image");
-        urlSong = intent.getStringExtra("id");
-        //Log.e("uri", urlSong + " " + urlCacheImage);
+
 
         param = new PlaybackParams();
-
-        FavouriteListActivity fvl = new FavouriteListActivity();
-
-
-        if (fvl.isNetworkAvailable(getApplicationContext())) {
-            storage = FirebaseStorage.getInstance();
-            storageRef = storage.getReference();
-            httpsReference = storage.getReferenceFromUrl(urlSong);
-            database = FirebaseDatabase.getInstance();
-            auth = FirebaseAuth.getInstance();
-            FirebaseUser user = auth.getCurrentUser();
-            songsDatabaseReference = database.getReference().child("SongsFav").child(user.getUid());
-        }
-
-
-        Glide.with(this)
-                .load(urlImage) // image url
-                .placeholder(R.drawable.ic_music_note_black_24dp) // any placeholder to load at start
-                .error(R.drawable.ic_music_note_black_24dp)  // any image in case of error
-                // resizing
-                .into(previewImageView);
 
 
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isCached()) {
-                    deleteFromCache();
+                    deleteSong(true);
                 } else {
                     try {
                         downloadSong();
@@ -243,6 +226,54 @@ private AlertDialog alertDialog;
                 showMore();
             }
         });
+
+
+
+        int[] gColors = mColor.getGcolors();
+
+        GradientDrawable gd2 = new GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM,
+                new int[] {gColors[1], gColors[0]});
+        gd2.setCornerRadius(0f);
+        LinearLayout background = findViewById(R.id.background);
+        background.setBackground(gd2);
+    }
+
+
+
+
+
+
+
+    private void ifNetworkIsNot(){
+
+            storage = FirebaseStorage.getInstance();
+            storageRef = storage.getReference();
+            httpsReference = storage.getReferenceFromUrl(urlSong);
+            database = FirebaseDatabase.getInstance();
+            auth = FirebaseAuth.getInstance();
+            FirebaseUser user = auth.getCurrentUser();
+            songsDatabaseReference = database.getReference().child("SongsFav").child(user.getUid());
+
+    }
+
+    private void getIntentExtra(){
+        intent = getIntent();
+        title = intent.getStringExtra("title");
+        titleTextView.setText(title);
+        group = intent.getStringExtra("group");
+        groupTextView.setText(group);
+        urlImage = intent.getStringExtra("image");
+        urlSong = intent.getStringExtra("id");
+        //Log.e("uri", urlSong + " " + urlCacheImage);
+
+        /*Glide.with(this)
+                .load(urlImage) // image url
+                .placeholder(R.drawable.ic_music_note_black_24dp) // any placeholder to load at start
+                .error(R.drawable.ic_music_note_black_24dp)  // any image in case of error
+                // resizing
+                .into(previewImageView);*/
+
     }
 
     private void showMore() {
@@ -288,7 +319,7 @@ private AlertDialog alertDialog;
         return isTrue;
     }
 
-    private void initializePlayer(String uri2) {
+    private void initializePlayer() {
         player = ExoPlayerFactory.newSimpleInstance(this);
         playerView.setPlayer(player);
         Uri uri = null;
@@ -300,12 +331,10 @@ private AlertDialog alertDialog;
 
             uri = Uri.parse(cacheAppData.getCacheDAO().getDownloadCache(urlSong).getUrl());
         } else {
-            //uri = Uri.parse(urlSong);
+            uri = Uri.parse(urlSong);
             //uri = Uri.parse("https://files.freemusicarchive.org/storage-freemusicarchive-org/music/KEXP/Summer_Babes/KEXP_Live_Feb_2011/Summer_Babes_-_15_-_Home_Alone_II_Live__KEXP.mp3");
 
         }
-
-        //uri = Uri.parse(cacheAppData.getCacheDAO().getAllCaches().getUrl().toString());
 
 
         //Uri uri = Uri.parse("file:/data/user/0/com.android.artem.myapp/cache/song1664556465848270998mp3");
@@ -321,7 +350,7 @@ private AlertDialog alertDialog;
     public void onStart() {
         super.onStart();
         if (Util.SDK_INT >= 24) {
-            initializePlayer(null);
+            initializePlayer();
         }
     }
 
@@ -330,7 +359,7 @@ private AlertDialog alertDialog;
         super.onResume();
         //hideSystemUi();
         if ((Util.SDK_INT < 24 || player == null)) {
-            initializePlayer(null);
+            initializePlayer();
         }
     }
 
@@ -379,10 +408,10 @@ private AlertDialog alertDialog;
     }
 
 
-    public void listener() {
+    public void addToFavourites() {
 
-        if (!isNetworkAvailable(getApplicationContext())) {
-            Toast.makeText(this, "It's impossible to add offline", Toast.LENGTH_SHORT).show();
+        if (!isNetwork.isNetworkAvailable(getApplicationContext())) {
+            Toast.makeText(this, "Check your network", Toast.LENGTH_SHORT).show();
             return;
         }
         listener = (new ValueEventListener() {
@@ -391,17 +420,14 @@ private AlertDialog alertDialog;
 
                 if (!dataSnapshot.exists()) {
                     Song song = new Song();
-                    song.setTitle(intent.getStringExtra("title"));
+                    song.setTitle(title);
                     song.setId(urlSong);
-                    song.setGroup(intent.getStringExtra("group"));
-                    song.setImage(intent.getStringExtra("image"));
+                    song.setGroup(group);
+                    song.setImage(urlImage);
                     songsDatabaseReference.push().setValue(song);
-                    Toast.makeText(SongActivity.this, "Song - " + title + " is added", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SongActivity.this, title + " has been added", Toast.LENGTH_LONG).show();
                     songsDatabaseReference.removeEventListener(listener);
-
                 } else {
-
-
                     for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                         if (dataSnapshot1.child("title").getValue().equals(title)) {
                             isAdded = true;
@@ -413,17 +439,16 @@ private AlertDialog alertDialog;
 
                     }
                     if (isAdded == false) {
-                        songsDatabaseReference.removeEventListener(listener);
                         Song song = new Song();
-                        song.setTitle(intent.getStringExtra("title"));
+                        song.setTitle(title);
                         song.setId(urlSong);
-                        song.setGroup(intent.getStringExtra("group"));
-                        song.setImage(intent.getStringExtra("image"));
+                        song.setGroup(group);
+                        song.setImage(urlImage);
                         songsDatabaseReference.push().setValue(song);
-                        Toast.makeText(SongActivity.this, "Song - " + title + " is added", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SongActivity.this, title + " has been added", Toast.LENGTH_LONG).show();
                         songsDatabaseReference.removeEventListener(listener);
                     } else {
-                        Toast.makeText(SongActivity.this, "Song is Already Added", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SongActivity.this, "Song has been already added ", Toast.LENGTH_LONG).show();
                         songsDatabaseReference.removeEventListener(listener);
                     }
 
@@ -443,104 +468,89 @@ private AlertDialog alertDialog;
     }
 
 
-    private void deleteFromCache() {
 
 
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case DialogInterface.BUTTON_POSITIVE:
-                        Cache cache = cacheAppData.getCacheDAO().getDownloadCache(urlSong);
-                        cacheAppData.getCacheDAO().deleteCache(cache);
-                        Toast.makeText(getApplicationContext(), "This song caches was deleted.", Toast.LENGTH_SHORT).show();
-                        File file = new File(cache.getUrl());
-                        file.delete();
-                        downloadButton.setImageResource(R.drawable.ic_cloud_download_white_24dp);
-                        break;
-
-                    case DialogInterface.BUTTON_NEGATIVE:
-
-                        break;
-                }
+    private void deleteSong(boolean fromCache) {
+        if(!fromCache){
+            if (!isNetwork.isNetworkAvailable(getApplicationContext())) {
+                Toast.makeText(this, "Check your network", Toast.LENGTH_SHORT).show();
+                return;
             }
-        };
+            deleteListener = (new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                        if (dataSnapshot1.child("title").getValue().equals(title)) {
+                            dataSnapshot1.getRef().removeValue();
+                            Toast.makeText(SongActivity.this, "Song has been deleted", Toast.LENGTH_SHORT).show();
+                            songsDatabaseReference.removeEventListener(deleteListener);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("You want delete this cache?").setPositiveButton("Yes", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener).show();
+                            try {
+                                Cache cache = cacheAppData.getCacheDAO().getDownloadCache(urlSong);
+                                cacheAppData.getCacheDAO().deleteCache(cache);
+                                File file = new File(cache.getUrl());
+                                file.delete();
+                                downloadButton.setImageResource(R.drawable.ic_cloud_download_white_24dp);
+                            } catch (Exception e) {
 
+                            }
 
-    }
+                            finish();
+                            break;
+                        } else {
 
-    private void deleteSong() {
-        if (!isNetworkAvailable(getApplicationContext())) {
-            Toast.makeText(this, "It's impossible to delete offline", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        deleteListener = (new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-
-                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    if (dataSnapshot1.child("title").getValue().equals(title)) {
-                        dataSnapshot1.getRef().removeValue();
-                        Toast.makeText(SongActivity.this, "Delete", Toast.LENGTH_SHORT).show();
-                        songsDatabaseReference.removeEventListener(deleteListener);
-
-                        try {
-                            Cache cache = cacheAppData.getCacheDAO().getDownloadCache(urlSong);
-                            cacheAppData.getCacheDAO().deleteCache(cache);
-                        } catch (Exception e) {
-
+                            songsDatabaseReference.removeEventListener(deleteListener);
                         }
 
-                        finish();
-                        break;
-                    } else {
-
-                        songsDatabaseReference.removeEventListener(deleteListener);
                     }
+
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
                 }
 
 
-            }
+            });
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            songsDatabaseReference.addValueEventListener(deleteListener);
 
-            }
+        }else{
+            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which) {
+                        case DialogInterface.BUTTON_POSITIVE:
+                            Cache cache = cacheAppData.getCacheDAO().getDownloadCache(urlSong);
+                            cacheAppData.getCacheDAO().deleteCache(cache);
+                            Toast.makeText(getApplicationContext(), "Song has been deleted from cache.", Toast.LENGTH_SHORT).show();
+                            File file = new File(cache.getUrl());
+                            file.delete();
+                            downloadButton.setImageResource(R.drawable.ic_cloud_download_white_24dp);
+                            break;
+
+                        case DialogInterface.BUTTON_NEGATIVE:
+
+                            break;
+                    }
+                }
+            };
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("You want to delete this cache?").setPositiveButton("Yes", dialogClickListener)
+                    .setNegativeButton("No", dialogClickListener).show();
+        }
 
 
-        });
-
-        songsDatabaseReference.addValueEventListener(deleteListener);
 
     }
 
 
     public void downloadSong() throws IOException {
-        /*storageRef.child("song/Vremya_i_Steklo_-_Pesnya_pro_litso.mp3").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-
-                urlSong = uri.toString();
-                releasePlayer();
-                initializePlayer();
-                Toast.makeText(SongActivity.this, urlSong, Toast.LENGTH_SHORT).show();
-                Log.d("uriii", urlSong+"");
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(SongActivity.this, "Fail", Toast.LENGTH_SHORT).show();
-            }
-        });*/
-
         if (isCached()) {
-            Toast.makeText(this, "Song is already cached", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Song has been cached", Toast.LENGTH_SHORT).show();
             return;
         } else if(progressBar.getVisibility()==View.VISIBLE) {
             return;
@@ -550,12 +560,10 @@ private AlertDialog alertDialog;
 
             downloadButton.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
-            progressBar.setProgress(100);
+            //progressBar.setProgress(100);
 
 
-            islandRef = storage.getReferenceFromUrl(urlImage);
-
-
+            /*islandRef = storage.getReferenceFromUrl(urlImage);
             final File localFileImage = File.createTempFile("image", "jpg");
 
             islandRef.getFile(localFileImage).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
@@ -569,11 +577,11 @@ private AlertDialog alertDialog;
                 public void onFailure(@NonNull Exception exception) {
 
                 }
-            });
+            });*/
 
 
             islandRef = storage.getReferenceFromUrl(urlSong);
-            //islandRef = storageRef.child("song/song1.mp3");
+
 
             final File localFile = File.createTempFile("song", "mp3");
 
@@ -582,29 +590,25 @@ private AlertDialog alertDialog;
                 @Override
                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
 
-                    long id = cacheAppData.getCacheDAO().addCache(new Cache(0, localFile.toString(), urlSong, group, title, urlCacheImage));
-
-                    Cache cache = cacheAppData.getCacheDAO().getCache(id);
+                    cacheAppData.getCacheDAO().addCache(new Cache(0, localFile.toString(), urlSong, group, title, null));
 
 
-                    //Log.e("uri", "" + cache.getId() + cache.getUrl() + " " + cache.getNetUrl());
                     releasePlayer();
-                    initializePlayer(cache.getUrl().toString());
-                    Log.e("cache", cache.getUrl());
+                    initializePlayer();
                     downloadButton.setImageResource(R.drawable.ic_cloud_download_red_24dp);
-                    //Toast.makeText(SongActivity.this, "Your song is downloading", Toast.LENGTH_LONG).show();
+
 
                     progressBar.setVisibility(View.GONE);
                     downloadButton.setVisibility(View.VISIBLE);
 
-                    listener();
+                    addToFavourites();
 
 
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
-                    Toast.makeText(SongActivity.this, "uri", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SongActivity.this, "Error", Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.GONE);
                     downloadButton.setVisibility(View.VISIBLE);
 
@@ -615,16 +619,13 @@ private AlertDialog alertDialog;
         }
     }
 
-    public boolean isNetworkAvailable(Context context) {
-        ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
-        return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
-    }
+
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.addToFavourites:
-                listener();
+                addToFavourites();
                 alertDialog.dismiss();
                 return;
             case R.id.addToCache:
@@ -636,11 +637,11 @@ private AlertDialog alertDialog;
                 alertDialog.dismiss();;
                 return;
             case R.id.deleteFromCache:
-                deleteFromCache();
+                deleteSong(true);
                 alertDialog.dismiss();
                 return;
             case R.id.deleteFromFav:
-                deleteSong();
+                deleteSong(false);
                 alertDialog.dismiss();
                 return;
         }

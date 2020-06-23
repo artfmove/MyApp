@@ -36,10 +36,10 @@ public class SplashScreenActivity extends AppCompatActivity {
         rotate = AnimationUtils.loadAnimation(this, R.anim.rotate);
         rotateBack = AnimationUtils.loadAnimation(this, R.anim.rotate_back);
 
-        /*logo1ImageView.setAnimation(rotateBack);
+        logo1ImageView.setAnimation(rotateBack);
         logo2ImageView.setAnimation(rotate);
         logo3ImageView.setAnimation(rotate);
-        logo4ImageView.setAnimation(rotateBack);*/
+        logo4ImageView.setAnimation(rotateBack);
 
         Thread thread = new Thread(){
             @Override
@@ -59,18 +59,18 @@ public class SplashScreenActivity extends AppCompatActivity {
                 }
             }
         };
-        //thread.start();
-        auth = FirebaseAuth.getInstance();
+        thread.start();
+        /*auth = FirebaseAuth.getInstance();
         if(auth.getCurrentUser() !=null){
             startActivity(new Intent(SplashScreenActivity.this, MainActivity.class));
         }else{
             startActivity(new Intent(SplashScreenActivity.this, SignInActivity.class));
-        }
+        }*/
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        finish();
+
     }
 }

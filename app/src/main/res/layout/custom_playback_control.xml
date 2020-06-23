@@ -19,8 +19,8 @@
     android:layout_height="100dp"
     android:layout_gravity="bottom"
     android:layoutDirection="ltr"
-    android:layout_marginBottom="10dp"
     android:orientation="vertical"
+    android:background="@android:color/black"
     tools:targetApi="28">
 
     <RelativeLayout

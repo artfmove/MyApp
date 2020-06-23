@@ -179,6 +179,11 @@ public class SignInActivity extends AppCompatActivity {
         //updateUI(currentUser);
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
     private void createUser(FirebaseUser firebaseUser) {
         User user  = new User();
         user.setId(firebaseUser.getUid());

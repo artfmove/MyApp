@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class MainActivity extends AppCompatActivity {
     private Fragment selectedFragment;
     private int currentItemId = R.id.search_song;
+    private int columnCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +39,8 @@ public class MainActivity extends AppCompatActivity {
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
 
-
         selectedFragment = new SearchListActivity();
+
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
 
     }
@@ -56,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
                             currentItemId=R.id.search_song;
                             selectedFragment = new SearchListActivity();
 
+
                             break;
                         case R.id.fav_list:
                             currentItemId=R.id.fav_list;
@@ -66,7 +70,9 @@ public class MainActivity extends AppCompatActivity {
                             currentItemId=R.id.settings;
                             selectedFragment = new SettingsFragment();
                             break;
+
                     }
+
 
 
                     /*FragmentManager fragmentManager = getSupportFragmentManager();

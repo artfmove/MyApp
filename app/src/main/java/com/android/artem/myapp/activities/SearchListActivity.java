@@ -64,7 +64,7 @@ public class SearchListActivity extends Fragment{
     private SongAdapter favouriteSongAdapter;
 
     private String userKey;
-    private int columntCount;
+    private int columnCount;
 
     private EditText searchEditText;
     private ImageButton searchImageButton;
@@ -80,11 +80,14 @@ public class SearchListActivity extends Fragment{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_search_list, container, false);
 
-        columntCount = getResources().getInteger(R.integer.column_count);
+        songRecyclerView = view.findViewById(R.id.recyclerView);
+        columnCount = getResources().getInteger(R.integer.column_count);
+        songRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), columnCount));
+
         context = getContext();
 
 
-        songRecyclerView = view.findViewById(R.id.recyclerView);
+
         searchEditText = view.findViewById(R.id.searchEditText);
         networkCheck = view.findViewById(R.id.networkCheck);
         searchEditText.setVisibility(View.GONE);
@@ -119,7 +122,7 @@ public class SearchListActivity extends Fragment{
         songsArrayList = new ArrayList<>();
         songAdapter = new SongAdapter(getContext(), songsArrayList);
 
-        songRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), columntCount));
+
         songRecyclerView.setAdapter(songAdapter);
 
 
@@ -161,6 +164,8 @@ public class SearchListActivity extends Fragment{
     public void onResume() {
         super.onResume();
         Act.act=1;
+        columnCount = getResources().getInteger(R.integer.column_count);
+        songRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), columnCount));
     }
 
 
@@ -318,10 +323,7 @@ public class SearchListActivity extends Fragment{
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(getContext(), SignInActivity.class));
         }
-        if(id==R.id.settings){
 
-            startActivity(new Intent(getContext(), SignInActivity.class));
-        }
 
         return super.onOptionsItemSelected(item);
     }

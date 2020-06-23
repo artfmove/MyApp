@@ -8,7 +8,9 @@
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
     app:cardCornerRadius="0dp"
-    app:cardElevation="0dp">
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="@color/colorBackground"
+    >
 
     <LinearLayout
 
@@ -16,7 +18,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@color/colorBackground">
+
+       >
 
         <ImageView
             android:id="@+id/previewImageView"
@@ -29,7 +32,6 @@
 
 
         <LinearLayout
-            android:background="@color/colorBackground"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
