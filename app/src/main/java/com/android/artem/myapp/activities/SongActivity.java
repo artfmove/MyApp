@@ -50,6 +50,7 @@ import com.android.artem.myapp.R;
 import com.android.artem.myapp.model.Song;
 import com.android.artem.myapp.util.mColor;
 import com.bumptech.glide.Glide;
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -75,6 +76,7 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.android.artem.myapp.isNetwork;
 import com.android.artem.myapp.util.Act;
+import com.android.artem.myapp.activities.MainActivity;
 
 
 import java.io.File;
@@ -125,7 +127,7 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
     private CacheAppData cacheAppData;
     private AlertDialog alertDialog;
 
-
+    private AlertDialog.Builder builder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,24 +139,21 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-
         cacheAppData = Room.databaseBuilder(getApplicationContext(), CacheAppData.class, "AllCacheDB")
                 .allowMainThreadQueries()
                 .build();
 
 
-        speedSeekbar = findViewById(R.id.speedSeekBar);
-        speedTextView = findViewById(R.id.speedTextView);
-        titleTextView = findViewById(R.id.titleTextView);
-        groupTextView = findViewById(R.id.groupTextView);
-        previewImageView = findViewById(R.id.previewImageView);
+        initialization();
 
-        downloadButton = findViewById(R.id.downloadButton);
-        moreButton = findViewById(R.id.moreButton);
-        progressBar = findViewById(R.id.progressBar);
-        playerView = findViewById(R.id.video_view);
+        getIntentExtra();
 
-        titleTextView.startAnimation((Animation) AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate));
+        if(isNetwork.isLogIn()){
+            ifNetworkAvailable();
+        }
+
+
+
 
 
         speedSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -190,18 +189,18 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
 
         });
 
-        getIntentExtra();
-        ifNetworkIsNot();
 
 
-
-
-        param = new PlaybackParams();
 
 
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!isNetwork.isLogIn()) {
+                    showIsLogIn("For a get more features please Sign In");
+                    return;
+                }
+
                 if (isCached()) {
                     deleteSong(true);
                 } else {
@@ -215,17 +214,43 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
         });
 
 
-        if (isCached()) {
-            downloadButton.setImageResource(R.drawable.ic_cloud_download_red_24dp);
-        }
+
 
 
         moreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!isNetwork.isLogIn()) {
+                    showIsLogIn("For a get more features please Sign In");
+                    return;
+                }
                 showMore();
             }
         });
+
+
+    }
+
+
+    public void initialization(){
+        speedSeekbar = findViewById(R.id.speedSeekBar);
+        speedTextView = findViewById(R.id.speedTextView);
+        titleTextView = findViewById(R.id.titleTextView);
+        groupTextView = findViewById(R.id.groupTextView);
+        previewImageView = findViewById(R.id.previewImageView);
+
+        downloadButton = findViewById(R.id.downloadButton);
+        moreButton = findViewById(R.id.moreButton);
+        progressBar = findViewById(R.id.progressBar);
+        playerView = findViewById(R.id.video_view);
+
+        titleTextView.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate));
+
+        param = new PlaybackParams();
+
+        if (isCached()) {
+            downloadButton.setImageResource(R.drawable.ic_cloud_download_red_24dp);
+        }
 
 
 
@@ -237,16 +262,41 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
         gd2.setCornerRadius(0f);
         LinearLayout background = findViewById(R.id.background);
         background.setBackground(gd2);
+
     }
 
 
+    public void showIsLogIn(String text){
+        builder = new AlertDialog.Builder(this);
+        auth = FirebaseAuth.getInstance();
 
 
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
+                        startActivity(intent);
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+
+                        break;
+                }
+            }
+        };
+
+        builder.setMessage(text).setPositiveButton("Go to Log/Sign In, ", dialogClickListener)
+                .setNegativeButton("No, maybe later", dialogClickListener)
+                .setTitle("Choose")
+                .setIcon(R.drawable.ic_done_white_24dp)
+                .show();
+
+    }
 
 
-
-    private void ifNetworkIsNot(){
-
+    private void ifNetworkAvailable(){
             storage = FirebaseStorage.getInstance();
             storageRef = storage.getReference();
             httpsReference = storage.getReferenceFromUrl(urlSong);
@@ -257,6 +307,8 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+
+
     private void getIntentExtra(){
         intent = getIntent();
         title = intent.getStringExtra("title");
@@ -265,7 +317,6 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
         groupTextView.setText(group);
         urlImage = intent.getStringExtra("image");
         urlSong = intent.getStringExtra("id");
-        //Log.e("uri", urlSong + " " + urlCacheImage);
 
         /*Glide.with(this)
                 .load(urlImage) // image url
@@ -322,9 +373,8 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
     private void initializePlayer() {
         player = ExoPlayerFactory.newSimpleInstance(this);
         playerView.setPlayer(player);
-        Uri uri = null;
+        Uri uri;
 
-        Cache currentCache = new Cache();
 
 
         if (isCached()) {
@@ -335,9 +385,6 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
             //uri = Uri.parse("https://files.freemusicarchive.org/storage-freemusicarchive-org/music/KEXP/Summer_Babes/KEXP_Live_Feb_2011/Summer_Babes_-_15_-_Home_Alone_II_Live__KEXP.mp3");
 
         }
-
-
-        //Uri uri = Uri.parse("file:/data/user/0/com.android.artem.myapp/cache/song1664556465848270998mp3");
 
         MediaSource mediaSource = buildMediaSource(uri);
 
@@ -438,7 +485,7 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
                         }
 
                     }
-                    if (isAdded == false) {
+                    /*if (isAdded == false) {
                         Song song = new Song();
                         song.setTitle(title);
                         song.setId(urlSong);
@@ -447,7 +494,7 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
                         songsDatabaseReference.push().setValue(song);
                         Toast.makeText(SongActivity.this, title + " has been added", Toast.LENGTH_LONG).show();
                         songsDatabaseReference.removeEventListener(listener);
-                    } else {
+                    }*/ if(!isAdded) {
                         Toast.makeText(SongActivity.this, "Song has been already added ", Toast.LENGTH_LONG).show();
                         songsDatabaseReference.removeEventListener(listener);
                     }
@@ -560,24 +607,6 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
 
             downloadButton.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
-            //progressBar.setProgress(100);
-
-
-            /*islandRef = storage.getReferenceFromUrl(urlImage);
-            final File localFileImage = File.createTempFile("image", "jpg");
-
-            islandRef.getFile(localFileImage).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                    urlCacheImage = localFileImage.toString();
-
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-
-                }
-            });*/
 
 
             islandRef = storage.getReferenceFromUrl(urlSong);
@@ -634,7 +663,7 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                alertDialog.dismiss();;
+                alertDialog.dismiss();
                 return;
             case R.id.deleteFromCache:
                 deleteSong(true);

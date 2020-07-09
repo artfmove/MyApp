@@ -43,6 +43,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SearchListActivity extends Fragment{
@@ -92,7 +93,14 @@ public class SearchListActivity extends Fragment{
         networkCheck = view.findViewById(R.id.networkCheck);
         searchEditText.setVisibility(View.GONE);
 
+        favouriteArrayList = new ArrayList<>();
+        favouriteSongAdapter = new SongAdapter(getContext(), favouriteArrayList);
 
+        songsArrayList = new ArrayList<>();
+        songAdapter = new SongAdapter(getContext(), songsArrayList);
+
+
+        songRecyclerView.setAdapter(songAdapter);
 
         if(isNetworkAvailable(getContext())){
             auth = FirebaseAuth.getInstance();
@@ -116,14 +124,7 @@ public class SearchListActivity extends Fragment{
         //usersDatabaseReference = database.getReference().child("users");
 
 
-        favouriteArrayList = new ArrayList<>();
-        favouriteSongAdapter = new SongAdapter(getContext(), favouriteArrayList);
 
-        songsArrayList = new ArrayList<>();
-        songAdapter = new SongAdapter(getContext(), songsArrayList);
-
-
-        songRecyclerView.setAdapter(songAdapter);
 
 
 
@@ -167,6 +168,7 @@ public class SearchListActivity extends Fragment{
         columnCount = getResources().getInteger(R.integer.column_count);
         songRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), columnCount));
     }
+
 
 
 
@@ -242,8 +244,11 @@ public class SearchListActivity extends Fragment{
                 if(dataSnapshot!=null) {
                     Song song = dataSnapshot.getValue(Song.class);
                     songsArrayList.add(song);
+
+                    Collections.shuffle(songsArrayList);
                     songAdapter.notifyDataSetChanged();
                 }else{
+
                     songsDatabaseReference.removeEventListener(songsChildEventListener);
                 }
 
@@ -270,8 +275,11 @@ public class SearchListActivity extends Fragment{
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
+
+
         };
         songsDatabaseReference.addChildEventListener(songsChildEventListener);
+
     }
 
 
@@ -292,6 +300,11 @@ public class SearchListActivity extends Fragment{
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu, menu);
+        if(FirebaseAuth.getInstance().getCurrentUser()==null){
+            MenuItem item = menu.getItem(1);
+            item.setTitle("Sign In");
+        }
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -322,6 +335,7 @@ public class SearchListActivity extends Fragment{
         if(id==R.id.signOut){
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(getContext(), SignInActivity.class));
+            getActivity().finish();
         }
 
 

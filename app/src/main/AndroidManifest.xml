@@ -8,35 +8,41 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activities.MainActivity"
             android:configChanges="keyboard|keyboardHidden|screenSize"
-            android:windowSoftInputMode="adjustPan">
-            <!-- keyboard back-->
+            android:windowSoftInputMode="adjustPan"
+            android:launchMode='singleTask'
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
 
         </activity>
         <activity
             android:name=".activities.FavouriteListActivity"
             android:label="Your Song List" />
         <activity android:name=".activities.SongActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:launchMode='singleTask'/>
         <activity
             android:name=".activities.SearchListActivity"
             android:label="Choose Song"
             />
 
 
-        <activity android:name=".activities.SignInActivity" />
+        <activity android:name=".activities.SignInActivity"
+            />
         <activity android:name=".activities.SplashScreenActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
 
         <service android:name="com.android.artem.myapp.MyDownloadService"

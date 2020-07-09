@@ -2,11 +2,13 @@ package com.android.artem.myapp.activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.android.artem.myapp.R;
@@ -41,8 +43,9 @@ public class SettingsFragment extends PreferenceFragmentCompat{
 
     private DatabaseReference usersDatabaseReference;
     private String name;
-    private Preference namePreference, backtracks;
+    private Preference namePreference, backtracks, feedback, cache, developer;
     private ValueEventListener valueEventListener;
+    private int i;
 
     private CacheAppData cacheAppData;
 
@@ -52,6 +55,22 @@ public class SettingsFragment extends PreferenceFragmentCompat{
 
         namePreference = findPreference("name");
         backtracks = findPreference("backtracks");
+        feedback = findPreference("feedback");
+        cache = findPreference("cache");
+        developer = findPreference("developer");
+
+
+
+
+
+
+        auth = FirebaseAuth.getInstance();
+        if(auth.getCurrentUser()==null){
+            backtracks.setVisible(false);
+            cache.setVisible(false);
+            return;
+        }
+
         backtracks.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -60,7 +79,32 @@ public class SettingsFragment extends PreferenceFragmentCompat{
             }
         });
 
-        auth = FirebaseAuth.getInstance();
+        developer.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                i++;
+                if(i==6){
+                    startActivity(new Intent(getContext(), SplashScreenActivity.class));
+                    i=0;
+                }
+                return true;
+            }
+        });
+
+        feedback.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent Email = new Intent(Intent.ACTION_SEND);
+                Email.setType("text/email");
+                Email.putExtra(Intent.EXTRA_EMAIL, new String[] { "artfmove@gmail.com" });
+                Email.putExtra(Intent.EXTRA_SUBJECT, "Feedback");
+                Email.putExtra(Intent.EXTRA_TEXT, "Dear ...," + "");
+                startActivity(Intent.createChooser(Email, "Send Feedback:"));
+                return true;
+            }
+        });
+
+
 
         usersDatabaseReference = FirebaseDatabase.getInstance().getReference().child("users");
         valueEventListener = new ValueEventListener() {
@@ -99,7 +143,7 @@ public class SettingsFragment extends PreferenceFragmentCompat{
 
         new AlertDialog.Builder(getContext())
                 .setTitle("Delete cache?")
-                .setMessage("You have" + cacheSize + "songs. Are you sure you want to delete this cache")
+                .setMessage("You have " + cacheSize + " songs. Are you sure you want to delete this cache")
 
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -120,6 +164,7 @@ public class SettingsFragment extends PreferenceFragmentCompat{
                 .setNegativeButton(android.R.string.no, null)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+
     }
 
 

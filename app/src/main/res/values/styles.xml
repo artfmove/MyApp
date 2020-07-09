@@ -11,14 +11,23 @@
     </style>
 
 
-    <style name="Asset">
-        <item name="android:tint">@color/colorMain1</item>
-        <item name="android:background">@android:color/transparent</item>
-    </style>
+
 
     <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">@color/colorPrimaryDark</item>
     </style>
+
+    <style name="SplashScreenImageView">
+        <item name="android:layout_width">100dp</item>
+        <item name="android:layout_height">100dp</item>
+    </style>
+
+
+
+        <style name="SplashTheme" parent="AppTheme">
+            <item name="android:windowBackground">@drawable/splash</item>
+        </style>
+
 
 
 

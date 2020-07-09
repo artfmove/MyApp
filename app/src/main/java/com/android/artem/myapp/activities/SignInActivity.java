@@ -40,7 +40,7 @@ public class SignInActivity extends AppCompatActivity {
 
     private TextView toggleLoginSignUpTextView;
 
-    private boolean isLoginModeActive;
+    private boolean isLoginModeActive=true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,7 +181,7 @@ public class SignInActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        finish();
+        moveTaskToBack(true);
     }
 
     private void createUser(FirebaseUser firebaseUser) {

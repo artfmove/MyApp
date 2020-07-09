@@ -5,8 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scroll"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorBackground">
+    android:layout_height="match_parent">
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -42,6 +41,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputName"
+        android:visibility="gone"
         app:errorEnabled="true"
         app:counterEnabled="true"
         app:counterMaxLength="15"
@@ -72,6 +72,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputConfirmPassword"
+        android:visibility="gone"
         app:errorEnabled="true"
         app:passwordToggleEnabled="true"
         android:layout_width="match_parent"
@@ -95,7 +96,7 @@
         android:background="@color/colorPrimary"/>
     <TextView
         android:id="@+id/toggleLoginSignUpTextView"
-        android:text="Tap to Log In"
+        android:text="Tap to Sign In"
         android:onClick="toggleLoginSignUp"
         android:background="@color/colorAccent"
         android:textColor="@android:color/white"

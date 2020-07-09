@@ -10,7 +10,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory
+    <!--<PreferenceCategory
         app:key="notifications_category"
         app:title="Notifications">
 
@@ -18,15 +18,14 @@
             app:key="notifications"
             app:title="Enable message notifications"/>
 
-    </PreferenceCategory>
+    </PreferenceCategory>-->
 
     <PreferenceCategory
         app:key="cache"
         app:title="Cache">
         <Preference app:title="Delete cache"
             app:key="backtracks"/>
-        <Preference app:title="Delete all backtracks?"
-            app:key="backtracks1"/>
+
 
     </PreferenceCategory>
 
@@ -46,7 +45,7 @@
         app:title="About">
         <Preference app:key="developer"
             app:title="Developer"
-            app:summary="Artfmove"/>
+            app:summary="artfmove"/>
         <Preference app:key="version"
             app:title="Version"
             app:summary="@string/versionName"/>

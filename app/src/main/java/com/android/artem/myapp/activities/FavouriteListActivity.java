@@ -72,13 +72,19 @@ public class FavouriteListActivity extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_favourite_list, container, false);
-        Log.e("Create", "CreateView");
+
 
         context = getContext();
 
 
 
         songRecyclerView = view.findViewById(R.id.recyclerView);
+
+        if(FirebaseAuth.getInstance().getCurrentUser()==null){
+            return null;
+        }
+
+
 
         if(isNetwork.isNetworkAvailable(getContext())){
             auth = FirebaseAuth.getInstance();
@@ -106,14 +112,13 @@ public class FavouriteListActivity extends Fragment {
 
 
 
-        columnCount = getResources().getInteger(R.integer.column_count);
-        songRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), columnCount));
+
 
 
 
 
         searchEditText = view.findViewById(R.id.searchEditText);
-        searchEditText.setVisibility(View.GONE);
+        loadSongs();
         changesTextSearchEditText();
 
         return view;
@@ -126,9 +131,10 @@ public class FavouriteListActivity extends Fragment {
     public void onResume() {
         super.onResume();
         if(isNetwork.isNetworkAvailable(getContext()))
-        loadSongs();
+        //loadSongs();
         Act.act=2;
-        Log.e("Create", "Resume");
+        columnCount = getResources().getInteger(R.integer.column_count);
+        songRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), columnCount));
     }
 
     private void searchSongs() {
@@ -272,7 +278,6 @@ public class FavouriteListActivity extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        Log.e("Create", "Create");
 
         super.onCreate(savedInstanceState);
 
@@ -280,6 +285,13 @@ public class FavouriteListActivity extends Fragment {
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu, menu);
+        if(FirebaseAuth.getInstance().getCurrentUser()==null){
+            MenuItem item = menu.getItem(0);
+            item.setVisible(false);
+            item = menu.getItem(1);
+            item.setTitle("Sign In");
+        }
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -310,6 +322,7 @@ public class FavouriteListActivity extends Fragment {
         if(id==R.id.signOut){
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(getContext(), SignInActivity.class));
+            getActivity().finish();
         }
 
 
