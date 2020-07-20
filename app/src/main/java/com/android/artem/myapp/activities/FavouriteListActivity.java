@@ -93,6 +93,7 @@ public class FavouriteListActivity extends Fragment {
             songsArrayList = new ArrayList<>();
             songAdapter = new SongAdapter(getContext(), songsArrayList);
             songRecyclerView.setAdapter(songAdapter);
+            loadSongs();
         }else{
             cacheSongsArrayList = new ArrayList<>();
             cacheSongsArrayList2 = new ArrayList<>();
@@ -118,7 +119,7 @@ public class FavouriteListActivity extends Fragment {
 
 
         searchEditText = view.findViewById(R.id.searchEditText);
-        loadSongs();
+
         changesTextSearchEditText();
 
         return view;
@@ -320,8 +321,14 @@ public class FavouriteListActivity extends Fragment {
             }
         }
         if(id==R.id.signOut){
-            FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(getContext(), SignInActivity.class));
+
+
+            Intent intent = new Intent(getContext(), SignInActivity.class);
+            if(FirebaseAuth.getInstance().getCurrentUser()!=null)
+                intent.putExtra("signOut", true);
+
+
+            startActivity(intent);
             getActivity().finish();
         }
 

@@ -254,14 +254,7 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-        int[] gColors = mColor.getGcolors();
 
-        GradientDrawable gd2 = new GradientDrawable(
-                GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[] {gColors[1], gColors[0]});
-        gd2.setCornerRadius(0f);
-        LinearLayout background = findViewById(R.id.background);
-        background.setBackground(gd2);
 
     }
 
@@ -317,6 +310,15 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
         groupTextView.setText(group);
         urlImage = intent.getStringExtra("image");
         urlSong = intent.getStringExtra("id");
+
+        int gColors = intent.getIntExtra("color", 0);
+
+        GradientDrawable gd2 = new GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM,
+                new int[] {gColors, Color.parseColor("#000000")});
+        gd2.setCornerRadius(0f);
+        LinearLayout background = findViewById(R.id.background);
+        background.setBackground(gd2);
 
         /*Glide.with(this)
                 .load(urlImage) // image url
@@ -485,7 +487,7 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
                         }
 
                     }
-                    /*if (isAdded == false) {
+                    if (isAdded == false) {
                         Song song = new Song();
                         song.setTitle(title);
                         song.setId(urlSong);
@@ -494,7 +496,8 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
                         songsDatabaseReference.push().setValue(song);
                         Toast.makeText(SongActivity.this, title + " has been added", Toast.LENGTH_LONG).show();
                         songsDatabaseReference.removeEventListener(listener);
-                    }*/ if(!isAdded) {
+
+                    }else{
                         Toast.makeText(SongActivity.this, "Song has been already added ", Toast.LENGTH_LONG).show();
                         songsDatabaseReference.removeEventListener(listener);
                     }

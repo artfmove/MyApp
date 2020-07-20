@@ -33,6 +33,11 @@ import com.android.artem.myapp.util.Act;
 import com.android.artem.myapp.R;
 import com.android.artem.myapp.model.Song;
 import com.android.artem.myapp.adapter.SongAdapter;
+import com.android.artem.myapp.activities.SignInActivity;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -123,18 +128,21 @@ public class SearchListActivity extends Fragment{
 
         //usersDatabaseReference = database.getReference().child("users");
 
-
+        String title="";
+        String id="";
+        String group="";
 
 
 
 
         Song song = new Song();
-        song.setTitle("The Seven Nation Army");
-        song.setId("https://firebasestorage.googleapis.com/v0/b/myapp-72b61.appspot.com/o/song%2FWhite%20Stripes%2C%20The%20-%20Seven%20Nation%20Army%20(minus).mp3?alt=media&token=dbdfa4d7-03b1-449a-83be-c71ed602364f");
-        song.setGroup("White Stripes");
-        song.setImage("https://firebasestorage.googleapis.com/v0/b/myapp-72b61.appspot.com/o/image%2Fwhite-stripes.jpg?alt=media&token=ab319f1a-18c6-4b54-a51c-fd518cb56c55");
-        //songsDatabaseReference.push().setValue(song);
-
+        song.setTitle("");
+        song.setId("");
+        song.setGroup("");
+        song.setImage("");
+        //for(int i=0; i<10; i++)
+        songsDatabaseReference.push().setValue(song);
+        adminSongs();
        
 
         /*Thread thread = new Thread(){
@@ -159,6 +167,9 @@ public class SearchListActivity extends Fragment{
         ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
     }
+
+
+
 
 
     @Override
@@ -205,7 +216,7 @@ public class SearchListActivity extends Fragment{
 
             }
         });
-        songsDatabaseReference.removeEventListener(songsChildEventListener);
+        //songsDatabaseReference.removeEventListener(songsChildEventListener);
     }
 
     private void changesTextSearchEditText() {
@@ -238,7 +249,35 @@ public class SearchListActivity extends Fragment{
     }
 
     public void loadSongs(){
-        songsChildEventListener = new ChildEventListener() {
+
+
+        songsDatabaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){
+
+                    Song song = dataSnapshot1.getValue(Song.class);
+                    songsArrayList.add(song);
+
+
+
+
+                }
+                Collections.shuffle(songsArrayList);
+                songAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+
+
+        });
+
+        /*songsChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if(dataSnapshot!=null) {
@@ -278,7 +317,7 @@ public class SearchListActivity extends Fragment{
 
 
         };
-        songsDatabaseReference.addChildEventListener(songsChildEventListener);
+        songsDatabaseReference.addChildEventListener(songsChildEventListener);*/
 
     }
 
@@ -333,8 +372,12 @@ public class SearchListActivity extends Fragment{
             }
         }
         if(id==R.id.signOut){
-            FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(getContext(), SignInActivity.class));
+            Intent intent = new Intent(getContext(), SignInActivity.class);
+            if(FirebaseAuth.getInstance().getCurrentUser()!=null){
+                intent.putExtra("signOut", true);
+            }
+
+            startActivity(intent);
             getActivity().finish();
         }
 
@@ -344,22 +387,33 @@ public class SearchListActivity extends Fragment{
 
 
 
+    private void adminSongs(){
 
-    /*public void download(){
-        songStorageReference.child("song1.mp3").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        songsDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onSuccess(Uri uri) {
-                Toast.makeText(SearchListActivity.this, uri+"", Toast.LENGTH_SHORT).show();
-                MediaPlayer mp;
-                mp = MediaPlayer.create(getApplicationContext(), uri);
-                mp.start();
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){
+                    if(dataSnapshot1.child("id").getValue().toString().toUpperCase().trim().equals("")) {
+
+                        dataSnapshot.getRef().removeValue();
+
+
+                    }
+
+
+
+                    //songsDatabaseReference.removeEventListener(songsChildEventListener);
+
+                }
             }
-        }).addOnFailureListener(new OnFailureListener() {
+
             @Override
-            public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(SearchListActivity.this, "fail", Toast.LENGTH_SHORT).show();
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
-    }*/
+    }
+
 
 }
