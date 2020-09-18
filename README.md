@@ -1,7 +1,11 @@
 # UBT
-Universal Backing Track<br>
-Application for your day!
-Uesful and awesome backing tracks in your pocket.
+<h1>Universal Backing Track<br></h1>
+      <p style = "font-family:georgia,garamond,serif;font-size:16px;font-style:italic;">
+         This is demo text
+      </p>
+
+Application for your day!<br>
+Uesful and awesome backing tracks in your pocket.<br>
 <img src="https://firebasestorage.googleapis.com/v0/b/myapp-72b61.appspot.com/o/image%2FScreenshot_2020-09-18-23-09-35-520_com.android.artem.myapp.jpg?alt=media&token=87eabe17-c440-4b7d-8be3-8fa200a3f6d3" width="300" title="hover text">
 <img src="https://firebasestorage.googleapis.com/v0/b/myapp-72b61.appspot.com/o/image%2FScreenshot_2020-09-18-23-09-14-689_com.android.artem.myapp.jpg?alt=media&token=f5811969-d1b7-4a6f-a5f8-0fd54126388e" width="300" title="hover text">
 <img src="https://firebasestorage.googleapis.com/v0/b/myapp-72b61.appspot.com/o/image%2FScreenshot_2020-09-18-23-09-44-141_com.android.artem.myapp.jpg?alt=media&token=aa58b3af-4ad7-41b6-8b3a-90ce70dae3ac" width="300" title="hover text">
