@@ -1,9 +1,5 @@
 # UBT
 <h1>Universal Backing Track<br></h1>
-      <p style = "font-family:georgia,garamond,serif;font-size:16px;font-style:italic;">
-         This is demo text
-      </p>
-
 Application for your day!<br>
 Uesful and awesome backing tracks in your pocket.<br>
 <img src="https://firebasestorage.googleapis.com/v0/b/myapp-72b61.appspot.com/o/image%2FScreenshot_2020-09-18-23-09-35-520_com.android.artem.myapp.jpg?alt=media&token=87eabe17-c440-4b7d-8be3-8fa200a3f6d3" width="300" title="hover text">
