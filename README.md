@@ -1,12 +1,12 @@
 # UBT
 <h1>Universal Backing Track<br></h1>
 Application for your day!<br>
-Useful and awesome backing tracks in your pocket.
-&#8226; Offline mode
-&#8226; Firebase 
-&#8226; Room Library
-&#8226; GIT
-&#8226; Fragment
+Useful and awesome backing tracks in your pocket.  <br>
+&#8226; Offline mode <br>
+&#8226; Firebase  <br>
+&#8226; Room Library <br>
+&#8226; GIT <br>
+&#8226; Fragment <br>
 &#8226; Java
  <div class="row">
  <img src="https://firebasestorage.googleapis.com/v0/b/myapp-72b61.appspot.com/o/image%2FScreenshot_1600462239.png?alt=media&token=bbdeb228-38f7-444b-ac40-a72f36a438df" width="350" title="hover text">
