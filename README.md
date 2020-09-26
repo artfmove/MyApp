@@ -2,6 +2,12 @@
 <h1>Universal Backing Track<br></h1>
 Application for your day!<br>
 Useful and awesome backing tracks in your pocket.
+&#8226; Offline mode
+&#8226; Firebase 
+&#8226; Room Library
+&#8226; GIT
+&#8226; Fragment
+&#8226; Java
  <div class="row">
  <img src="https://firebasestorage.googleapis.com/v0/b/myapp-72b61.appspot.com/o/image%2FScreenshot_1600462239.png?alt=media&token=bbdeb228-38f7-444b-ac40-a72f36a438df" width="350" title="hover text">
 <img src="https://firebasestorage.googleapis.com/v0/b/myapp-72b61.appspot.com/o/image%2FScreenshot_2020-09-18-23-09-35-520_com.android.artem.myapp.jpg?alt=media&token=87eabe17-c440-4b7d-8be3-8fa200a3f6d3" width="350" title="hover text">
